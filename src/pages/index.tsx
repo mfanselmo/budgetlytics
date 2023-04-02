@@ -2,10 +2,10 @@ import { type NextPage } from "next";
 import Head from "next/head";
 import { SignInButton, SignOutButton, SignedIn, SignedOut } from "@clerk/nextjs";
 
-// import { api } from "~/utils/api";
+import { api } from "~/utils/api";
 
 const Home: NextPage = () => {
-  // const hello = api.example.hello.useQuery({ text: "from tRPC" });
+  const {data} = api.category.getAll.useQuery()
   return (
     <>
       <Head>
@@ -16,6 +16,9 @@ const Home: NextPage = () => {
       <main>
         <SignedIn>
           <p>Signed in test</p>
+          {
+            data?.map(category => (<div key={category.id}>{category.name}</div>))
+          }
           <SignOutButton />
         </SignedIn>
         <SignedOut>
