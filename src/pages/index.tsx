@@ -1,17 +1,25 @@
 import { type NextPage } from "next";
-
-import { api } from "~/utils/api";
 import Link from "next/link";
+import { Button } from "~/components/ui/button";
 
 const Home: NextPage = () => {
-  const {data} = api.category.getAll.useQuery()
   return (
     <>
-        <p>Signed in test</p>
-        {
-          data?.map(category => (<div key={category.id}>{category.name}</div>))
-        }
-        <Link href="/category/new">New Category</Link>
+      <h2>Actions</h2>
+
+      <div className="mt-4 flex justify-between">
+        <Link href="/category">
+          <Button>
+            All categories
+          </Button>
+        </Link>
+        <Link href="/category/new">
+          <Button>
+            New Category
+          </Button>
+        </Link>
+
+      </div>
     </>
   );
 };

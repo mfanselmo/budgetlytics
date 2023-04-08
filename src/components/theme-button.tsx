@@ -12,7 +12,6 @@ const ThemeButton = () => {
         <Button
             size={"sm"}
             variant={"ghost"}
-            className='mr-2'
             onClick={() => theme == "dark"? setTheme('light'): setTheme("dark")}>
             <SunMoon />
         </Button>

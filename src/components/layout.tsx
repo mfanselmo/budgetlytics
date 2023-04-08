@@ -18,26 +18,28 @@ export default function Layout({ children }: React.PropsWithChildren) {
       <main className="flex min-h-screen flex-col">
         <header className="sticky top-0 z-40 w-full border-b border-b-slate-200 bg-white dark:border-b-slate-700 dark:bg-slate-900">
         
-          <div className="container flex py-2 px-2 justify-between items-center">
-            <Link href={"/"} className="flex-1">
+          <div className="mx-auto container flex py-2 px-6 justify-between items-center">
+            <Link href={"/"} >
               <p className="large">Budgetlytics</p>
             </Link>
-            <ThemeButton/>
-            {user && <UserButton />}
+            <div className="flex space-x-2">
+              {user && <UserButton />}
+              <ThemeButton/>
+            </div>
           </div>
         </header>
-        <SignedIn>
-          {children}
-        </SignedIn>
-        <SignedOut>
-          <div className="flex justify-center h-full">
+        <div className="h-full mx-auto container px-6 py-6">
+          <SignedIn>
+            {children}
+          </SignedIn>
+          <SignedOut>
             <SignInButton mode="modal">
               <Button className="my-auto">
                 Sign in
               </Button>
             </SignInButton>
-          </div>
-        </SignedOut>
+          </SignedOut>
+        </div>
       </main>
     </>
   )
