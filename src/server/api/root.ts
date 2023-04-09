@@ -1,5 +1,7 @@
 import { createTRPCRouter } from "~/server/api/trpc";
 import { categoryRouter } from "~/server/api/routers/category";
+import { timedCategoryRouter } from "~/server/api/routers/timedCategory";
+import { transactionRouter } from "~/server/api/routers/transaction";
 
 /**
  * This is the primary router for your server.
@@ -8,6 +10,8 @@ import { categoryRouter } from "~/server/api/routers/category";
  */
 export const appRouter = createTRPCRouter({
   category: categoryRouter,
+  timedCategory: timedCategoryRouter,
+  transaction: transactionRouter,
 });
 
 // export type definition of API

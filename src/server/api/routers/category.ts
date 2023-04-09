@@ -23,9 +23,10 @@ export const categoryRouter = createTRPCRouter({
         timedCategories: {
           create: {
             userId,
+            name: input.name,
             budget: input.budget,
             startDate: dayjs().startOf('month').toDate(),
-            endDate: dayjs().endOf('month').toDate()
+            endDate: dayjs().endOf('month').toDate(),
           }
         }
       },

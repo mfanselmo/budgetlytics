@@ -45,8 +45,8 @@ const NewCategory: NextPage = () => {
       return router.push('/category')
     },
     onError: (e) => {
-
       toast({
+        variant: 'destructive',
         title: e.data?.code || "Error",
         description: e.data?.message || "Unknown error"
       })

@@ -26,6 +26,8 @@ export const api = createTRPCNext<AppRouter>({
           queries: {
             refetchOnWindowFocus: false,
             refetchOnMount: false,
+            retry: false,
+            staleTime: 10000
           },
         }
       },

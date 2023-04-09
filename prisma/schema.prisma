@@ -32,6 +32,7 @@ model TimedCategory {
     startDate DateTime 
     endDate DateTime 
     budget Int
+    name String
 
     userId String
 
@@ -48,8 +49,8 @@ model Transaction {
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
 
+    name String
     userId String
-    date DateTime @default(now())
     amount Int
 
     timedCategoryId String

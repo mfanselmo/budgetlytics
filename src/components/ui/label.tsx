@@ -23,11 +23,11 @@ const Label = React.forwardRef<
             />
         )
     return (
-        <div className="grid w-full items-center gap-1.5">
+        <div className="grid w-full items-center">
             <LabelPrimitive.Root
                 ref={ref}
                 className={cn(
-                    "text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70",
+                    "text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 mb-1.5",
                     className
                 )}
                 {...props}

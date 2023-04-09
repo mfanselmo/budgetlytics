@@ -1,30 +1,37 @@
 import { type NextPage } from "next";
 import { api } from "~/utils/api";
-import Link from "next/link"
 import { Button } from "~/components/ui/button";
+import { LoadingPage } from "~/components/loading";
+import { useContext } from "react";
+import { PeriodContext } from "~/context/period";
+import { CategoryCard } from "~/components/category-card";
 
 const AllCategories: NextPage = () => {
+  const period = useContext(PeriodContext)
+  const { data, isLoading: categoriesLoading } = api.timedCategory.getAllInPeriod.useQuery({
+    month: period.date.month(),
+    year: period.date.year(),
+    // includeTransactions: false,
+  })
 
-  const { data } = api.category.getAll.useQuery()
+  console.log(data)
   return (
     <>
       <h2>Categories</h2>
       <div className="mt-4">
         <div>
           {
-            data?.map(category => (
-              <div key={category.id} className="h-12 flex items-center border-b border-b-slate-200 dark:border-b-slate-700 last:mb-8">
-                <span className="font-bold mr-4">{category.name}</span>
-                <span>€{category.budget}</span>
-              </div>
-            ))
+            categoriesLoading ?
+              <LoadingPage /> :
+              data?.map(category => <CategoryCard timedCategory={category} key={category.id} />)
           }
         </div>
-        <Link href="/category/new" >
-          <Button>
-            New Category
-          </Button>
-        </Link>
+        <Button onClick={period.increaseMonth}>
+          Older
+        </Button>
+        <Button onClick={period.decreaseMonth}>
+          Newer
+        </Button>
       </div>
     </>
   );
