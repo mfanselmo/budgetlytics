@@ -6,12 +6,56 @@ generator client {
 }
 
 datasource db {
-    provider = "sqlite"
-    url      = env("DATABASE_URL")
+    provider     = "mysql"
+    url          = env("DATABASE_URL")
+    relationMode = "prisma"
 }
 
-model Example {
+model Category {
     id        String   @id @default(cuid())
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
+
+    name   String
+    userId String
+    budget Int
+    timedCategories TimedCategory[]
+
+    @@unique([userId, name], map: "Category name must be unique")
+    @@index([userId])
+}
+model TimedCategory {
+    id        String   @id @default(cuid())
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    startDate DateTime 
+    endDate DateTime 
+    budget Int
+
+    userId String
+
+    categoryId String?
+    category Category? @relation(fields: [categoryId], references: [id], onDelete: SetNull)
+    
+    transactions Transaction[]
+
+    @@index([categoryId])
+}
+
+model Transaction {
+    id String @id @default(cuid())
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    userId String
+    date DateTime @default(now())
+    amount Int
+
+    timedCategoryId String
+    timedCategory TimedCategory @relation(fields: [timedCategoryId], references: [id])
+
+    @@index([timedCategoryId])
+    @@index([userId])
+
 }
