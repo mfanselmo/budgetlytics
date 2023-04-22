@@ -50,7 +50,6 @@ export default function Layout({ children }: React.PropsWithChildren) {
                   <DropdownMenuItem
                     onClick={() => theme === "dark" ? setTheme('light') : setTheme("dark")}>
                     <span className="pr-2">Change theme</span> <SunMoon />
-
                   </DropdownMenuItem>
                   <DropdownMenuItem>
                     <Link href="/category">

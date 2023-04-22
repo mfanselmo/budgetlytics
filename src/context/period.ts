@@ -6,12 +6,14 @@ export type Period = {
     date: dayjs.Dayjs
     increaseMonth: () => void
     decreaseMonth: () => void
+    setPeriod: (date: dayjs.Dayjs) => void
 }
 
 
 export const PeriodContext = createContext<Period>({
     date: dayjs(),
     increaseMonth: () => {},
-    decreaseMonth: () => {}
+    decreaseMonth: () => {},
+    setPeriod: () => {}
 });
 

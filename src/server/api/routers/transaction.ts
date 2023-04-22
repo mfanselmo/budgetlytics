@@ -60,4 +60,31 @@ export const transactionRouter = createTRPCRouter({
       }
     });
   }),
+  getById: privateProcedure
+    .input(z.object({
+      id: z.string().cuid()
+    }))
+    .query(({ ctx, input }) => {
+      return ctx.prisma.transaction.findFirstOrThrow({
+        where: {
+          userId: ctx.userId,
+          id: input.id
+        },
+        include: {
+          timedCategory: true
+        }
+      });
+    }),
+  delete: privateProcedure
+    .input(z.object({
+      id: z.string().cuid()
+    }))
+    .mutation(({ ctx, input }) => {
+      return ctx.prisma.transaction.deleteMany({
+        where: {
+          userId: ctx.userId,
+          id: input.id
+        },
+      });
+    })
 });

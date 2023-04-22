@@ -21,7 +21,8 @@ const MyApp: AppType = ({ Component, pageProps }) => {
         <PeriodContext.Provider value={{
           date: queryDate,
           increaseMonth: () => setQueryDate(o => o.set('month', o.month() + 1)),
-          decreaseMonth: () => setQueryDate(o => o.set('month', o.month() - 1))
+          decreaseMonth: () => setQueryDate(o => o.set('month', o.month() - 1)),
+          setPeriod: (date: dayjs.Dayjs) => setQueryDate(date)
         }}>
           <Toaster />
           <Layout>

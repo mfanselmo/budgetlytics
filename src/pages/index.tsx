@@ -1,33 +1,34 @@
 import { type NextPage } from "next";
 import Link from "next/link";
 import { useContext } from "react";
-import { CategoryCard } from "~/components/category-card";
+import { TimedCategoryCard } from "~/components/timed-category-card";
 import { LoadingPage } from "~/components/loading";
 import { Button } from "~/components/ui/button";
 import { PeriodContext } from "~/context/period";
 import { api } from "~/utils/api";
+import NotFoundPage from "./404";
+import PeriodChange from "~/components/period-change";
 
 const Home: NextPage = () => {
   const period = useContext(PeriodContext)
-  const { data, isLoading: categoriesLoading } = api.timedCategory.getAllInPeriod.useQuery({
+  const { data, isLoading } = api.timedCategory.getAllInPeriodWithTransactions.useQuery({
     month: period.date.month(),
     year: period.date.year(),
-    includeTransactions: true,
   })
   return (
     <>
-      <h2 className="items-baseline">Period - <span className="font-light">{period.date.format("MMMM YYYY")}</span></h2>
-
-      <div className="mt-4">
-        <div>
-          {
-            categoriesLoading ?
-              <LoadingPage /> :
-              data?.map(category => <CategoryCard timedCategory={category} key={category.id} />)
-          }
+      <h2 className="items-baseline flex justify-between">
+        <span >{period.date.format("MMMM YYYY")}</span>
+        <PeriodChange />
+      </h2>
+      {isLoading && <LoadingPage />}
+      {!isLoading && !data && <NotFoundPage />}
+      {
+        (data && !isLoading) &&
+        <div className="mt-4">
+          {data.map(category => <TimedCategoryCard timedCategory={category} key={category.id} />)}
         </div>
-
-      </div>
+      }
     </>
   );
 };

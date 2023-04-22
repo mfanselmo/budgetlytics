@@ -4,35 +4,26 @@ import { Button } from "~/components/ui/button";
 import { LoadingPage } from "~/components/loading";
 import { useContext } from "react";
 import { PeriodContext } from "~/context/period";
+import { TimedCategoryCard } from "~/components/timed-category-card";
+import NotFoundPage from "../404";
 import { CategoryCard } from "~/components/category-card";
+import PeriodChange from "~/components/period-change";
 
 const AllCategories: NextPage = () => {
+  const { data, isLoading } = api.category.getAll.useQuery()
   const period = useContext(PeriodContext)
-  const { data, isLoading: categoriesLoading } = api.timedCategory.getAllInPeriod.useQuery({
-    month: period.date.month(),
-    year: period.date.year(),
-    // includeTransactions: false,
-  })
 
-  console.log(data)
   return (
     <>
       <h2>Categories</h2>
-      <div className="mt-4">
-        <div>
-          {
-            categoriesLoading ?
-              <LoadingPage /> :
-              data?.map(category => <CategoryCard timedCategory={category} key={category.id} />)
-          }
+      {isLoading && <LoadingPage />}
+      {!isLoading && !data && <NotFoundPage />}
+      {
+        (data && !isLoading) &&
+        <div className="mt-4">
+          {data.map(category => <CategoryCard category={category} key={category.id} />)}
         </div>
-        <Button onClick={period.increaseMonth}>
-          Older
-        </Button>
-        <Button onClick={period.decreaseMonth}>
-          Newer
-        </Button>
-      </div>
+      }
     </>
   );
 };

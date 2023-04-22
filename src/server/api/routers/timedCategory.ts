@@ -32,18 +32,54 @@ export const timedCategoryRouter = createTRPCRouter({
 
   //     return category;
   //   }),
-  getAll: privateProcedure.query(({ ctx }) => {
-    return ctx.prisma.category.findMany({
-      where: {
-        userId: ctx.userId
-      }
-    });
-  }),
+  // getAll: privateProcedure.query(({ ctx }) => {
+  //   return ctx.prisma.category.findMany({
+  //     where: {
+  //       userId: ctx.userId
+  //     }
+  //   });
+  // }),
+  getById: privateProcedure
+    .input(z.object({
+      id: z.string().cuid()
+    }))  
+    .query(({ ctx, input }) => {
+      return ctx.prisma.timedCategory.findFirstOrThrow({
+        where: {
+          userId: ctx.userId,
+          id: input.id
+        },
+        include: {
+          transactions: {
+            orderBy: {
+              createdAt: 'desc'
+            }
+          }
+        }
+      });
+    }),
   getAllInPeriod: privateProcedure
     .input(z.object({
       month: z.number().int().min(0).max(11).default(dayjs().month()),
       year: z.number().int().min(1960).max(2055).default(dayjs().year()),
-      includeTransactions: z.boolean().optional().default(false)
+    }))
+    .query(({ ctx, input }) => {
+      return ctx.prisma.timedCategory.findMany({
+        where: {
+          userId: ctx.userId,
+          startDate: {
+            lte: dayjs().set('month', input.month).set('year', input.year).toDate()
+          },
+          endDate: {
+            gte: dayjs().set('month', input.month).set('year', input.year).toDate()
+          }
+        },
+      });
+    }),
+  getAllInPeriodWithTransactions: privateProcedure
+    .input(z.object({
+      month: z.number().int().min(0).max(11).default(dayjs().month()),
+      year: z.number().int().min(1960).max(2055).default(dayjs().year()),
     }))
     .query(({ ctx, input }) => {
       return ctx.prisma.timedCategory.findMany({

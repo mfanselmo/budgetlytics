@@ -33,8 +33,8 @@ model TimedCategory {
     endDate DateTime 
     budget Int
     name String
-
     userId String
+    currentAmount Int @default(0)
 
     categoryId String?
     category Category? @relation(fields: [categoryId], references: [id], onDelete: SetNull)
@@ -54,7 +54,7 @@ model Transaction {
     amount Int
 
     timedCategoryId String
-    timedCategory TimedCategory @relation(fields: [timedCategoryId], references: [id])
+    timedCategory TimedCategory @relation(fields: [timedCategoryId], references: [id], onDelete: Cascade)
 
     @@index([timedCategoryId])
     @@index([userId])

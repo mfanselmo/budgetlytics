@@ -11,6 +11,7 @@ export default function CustomSelect({ name, control, isLoading, isDisabled, opt
                 control={control}
                 render={({ field }) =>
                     <Select
+
                         unstyled
                         ref={field.ref}
                         name={field.name}

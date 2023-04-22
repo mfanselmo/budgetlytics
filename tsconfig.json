@@ -28,6 +28,6 @@
     "**/*.tsx",
     "**/*.cjs",
     "**/*.mjs"
-  ],
+, "jakefile.js"  ],
   "exclude": ["node_modules"]
 }

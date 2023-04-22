@@ -10,6 +10,8 @@ import { Input } from "~/components/ui/input";
 import { Button } from "~/components/ui/button";
 import { Label } from "~/components/ui/label";
 import { useRouter } from "next/router";
+import { useContext } from "react";
+import { PeriodContext } from "~/context/period";
 
 
 const formSchema = z
@@ -25,6 +27,7 @@ type FormSchemaType = z.infer<typeof formSchema>;
 const NewCategory: NextPage = () => {
 
   const { toast } = useToast()
+  const period = useContext(PeriodContext)
 
   const {
     register,
@@ -39,8 +42,11 @@ const NewCategory: NextPage = () => {
 
   const { mutate, isLoading: isCreating } = api.category.create.useMutation({
     onSuccess: async () => {
-      await ctx.category.getAll.invalidate(undefined, {
-        type: "all"
+      await ctx.timedCategory.getAllInPeriod.invalidate({
+        month: period.date.month(),
+        year: period.date.year()
+      }, {
+        type: "all",
       });
       return router.push('/category')
     },
