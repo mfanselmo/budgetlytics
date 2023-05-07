@@ -39,6 +39,38 @@ export const timedCategoryRouter = createTRPCRouter({
   //     }
   //   });
   // }),
+  generateNewMonthTimedCategories: privateProcedure
+  .input(z.object({
+    month: z.number().int().min(0).max(11).default(dayjs().month()),
+    year: z.number().int().min(1960).max(2055).default(dayjs().year()),
+  }))
+  .mutation(async ({ ctx, input }) => {
+    const userId = ctx.userId;
+    const date = dayjs().set('month', input.month).set('year', input.year)
+
+    const userCategories = await ctx.prisma.category.findMany({
+      where: {
+        userId
+      }
+    })
+
+
+    const promises = userCategories.map(cat => {
+      return ctx.prisma.timedCategory.create({
+        data: {
+          userId,
+          name: cat.name,
+          budget: cat.budget,
+          categoryId: cat.id,
+          startDate: date.startOf('month').toDate(),
+          endDate: date.endOf('month').toDate(),
+        }
+      })
+    });
+
+    return Promise.all(promises)
+
+  }),
   getById: privateProcedure
     .input(z.object({
       id: z.string().cuid()

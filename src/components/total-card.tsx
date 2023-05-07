@@ -1,0 +1,36 @@
+// Todo: extract to types file
+import type { inferRouterOutputs } from '@trpc/server';
+import Link from 'next/link';
+import type { AppRouter } from '~/server/api/root';
+import { Plus, Eye } from "lucide-react"
+import { Button } from './ui/button';
+import { Progress } from './ui/progress';
+import { sum } from '~/helpers/utils';
+
+type RouterOutput = inferRouterOutputs<AppRouter>
+type TimedCategoryWithTransactions = RouterOutput['timedCategory']['getAllInPeriodWithTransactions'][number]
+
+
+
+
+
+export const TotalCard = ({ timedCategories }: { timedCategories: TimedCategoryWithTransactions[] }) => {
+    const totalAvailable = sum(timedCategories.map(t => t.budget))
+    const totalUsed = timedCategories.reduce((acc, curr) => {
+        const aux = sum(curr.transactions.map(t => t.amount))
+        return acc + aux
+    }, 0)
+
+    return (
+
+        <div className="py-3  flex flex-col mt-4 -mx-6 px-6 border-t-8 border-t-slate-100 dark:border-t-slate-700">
+            <div className="flex items-center">
+                <span className="font-bold flex-grow">Total</span>
+            </div>
+            <div className='flex items-center mt-1'>
+                <span className="mr-2"><span className='font-extralight mr-0.5'>€{totalUsed}/</span>€{totalAvailable}</span>
+                <Progress value={(100 * totalUsed) / totalAvailable} />
+            </div>
+        </div>
+    );
+};

@@ -16,17 +16,18 @@ type TimedCategoryWithTransactions = RouterOutput['timedCategory']['getAllInPeri
 type TimedCategoryWithoutTransactions = RouterOutput['category']['getById']['timedCategories'][number]
 
 
-
-
-
 export const TimedCategoryCard = ({ timedCategory }: { timedCategory: TimedCategoryWithTransactions }) => {
-    const total = sum(timedCategory.transactions.map(t => t.amount))
+    const totalUsed = sum(timedCategory.transactions.map(t => t.amount))
 
     return (
-        <div className="py-3 first:pt-0 flex flex-col border-b border-b-slate-200 dark:border-b-slate-700 last:mb-8  last:border-0">
+        <div className="py-3 first:pt-0 flex flex-col border-b border-b-slate-200 dark:border-b-slate-700 last:border-0">
             <div className="flex items-center">
                 <span className="font-bold flex-grow">{timedCategory.name}</span>
-                <Link className="mr-1" href={{ pathname: `/timed-category/${timedCategory.id}` }}>
+                <Link className="mr-1" href={{
+                    pathname: `/timed-category/${timedCategory.id}`, query: {
+                        timedCategoryData: window.btoa(JSON.stringify(timedCategory))
+                    }
+                }}>
                     <Button size={'sm'} variant={'outline'}>
                         <Eye />
                     </Button>
@@ -38,8 +39,8 @@ export const TimedCategoryCard = ({ timedCategory }: { timedCategory: TimedCateg
                 </Link>
             </div>
             <div className='flex items-center mt-1'>
-                <span className="mr-2">€{timedCategory.budget}</span>
-                <Progress value={(100 * total) / timedCategory.budget} />
+                <span className="mr-2"><span className='font-extralight mr-0.5'>€{totalUsed}/</span>€{timedCategory.budget}</span>
+                <Progress value={(100 * totalUsed) / timedCategory.budget} />
             </div>
         </div>
     );

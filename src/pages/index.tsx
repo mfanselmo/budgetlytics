@@ -8,10 +8,12 @@ import { PeriodContext } from "~/context/period";
 import { api } from "~/utils/api";
 import NotFoundPage from "./404";
 import PeriodChange from "~/components/period-change";
+import NewMonthButton from "~/components/new-month-button";
+import { TotalCard } from "~/components/total-card";
 
 const Home: NextPage = () => {
   const period = useContext(PeriodContext)
-  const { data, isLoading } = api.timedCategory.getAllInPeriodWithTransactions.useQuery({
+  const { data: timedCategories, isLoading } = api.timedCategory.getAllInPeriodWithTransactions.useQuery({
     month: period.date.month(),
     year: period.date.year(),
   })
@@ -22,11 +24,15 @@ const Home: NextPage = () => {
         <PeriodChange />
       </h2>
       {isLoading && <LoadingPage />}
-      {!isLoading && !data && <NotFoundPage />}
+      {!isLoading && !timedCategories && <NotFoundPage />}
       {
-        (data && !isLoading) &&
+        (timedCategories && !isLoading) &&
         <div className="mt-4">
-          {data.map(category => <TimedCategoryCard timedCategory={category} key={category.id} />)}
+          <div>
+            {timedCategories.map(timedCategory => <TimedCategoryCard timedCategory={timedCategory} key={timedCategory.id} />)}
+          </div>
+          <TotalCard timedCategories={timedCategories} />
+          {!timedCategories.length && <NewMonthButton />}
         </div>
       }
     </>

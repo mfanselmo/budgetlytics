@@ -22,7 +22,7 @@ export const TransactionCard = ({ transaction }: { transaction: Transaction }) =
                 <span className='col-span-2 font-light text-sm'>{dayjs(transaction.createdAt).format("DD/MM/YYYY")}</span>
                 <span className='col-span-1 flex-grow'>€{transaction.amount}</span>
             </div>
-            <Link className="mr-1" href={{ pathname: `/transaction/${transaction.id}` }}>
+            <Link className="mr-1" href={{ pathname: `/transaction/${transaction.id}` }} prefetch={false}>
                 <Button size={'sm'} variant={'outline'}>
                     <Eye />
                 </Button>

@@ -1,42 +1,50 @@
 import { api } from "~/utils/api";
-import { Button } from "~/components/ui/button";
-import { useContext } from "react";
-import { PeriodContext } from "~/context/period";
+import type { AppRouter } from '~/server/api/root';
 import { type NextPage } from "next";
 import { useRouter } from "next/router";
 import { LoadingPage } from "~/components/loading";
 import NotFoundPage from "../404";
 import { TransactionCard } from "~/components/transaction-card";
-import PeriodChange from "~/components/period-change";
 import dayjs from "dayjs";
 import { sum } from "~/helpers/utils";
+import type { inferRouterOutputs } from '@trpc/server';
 
+type RouterOutput = inferRouterOutputs<AppRouter>
+
+type TimedCategoryWithTransactions = RouterOutput['timedCategory']['getAllInPeriodWithTransactions'][number]
 
 
 const TimedCategory: NextPage = () => {
-    const period = useContext(PeriodContext)
     const router = useRouter()
-    const { id } = router.query
+    const { id, timedCategoryData } = router.query
 
+    let timedCategoryInitialData: TimedCategoryWithTransactions | undefined;
+    try {
+        timedCategoryInitialData = JSON.parse(window.atob(timedCategoryData as string)) as TimedCategoryWithTransactions
+    } catch (error) {
+        timedCategoryInitialData = undefined
+    }
 
-    const { data, isLoading } = api.timedCategory.getById.useQuery({
+    const { data: timedCategory, isLoading } = api.timedCategory.getById.useQuery({
         id: id as string
+    }, {
+        initialData: timedCategoryInitialData
     })
 
-    const total = sum(data?.transactions.map(t => t.amount) || [])
+    const total = sum(timedCategory?.transactions.map(t => t.amount) || [])
 
     return (
         <>
-            <h2 className="flex justify-between items-baseline">{data?.name || "Loading"} {data && <span className="font-light">{dayjs(data.startDate).format("YYYY MMMM")}</span>}</h2>
+            <h2 className="flex justify-between items-baseline">{timedCategory?.name || "Loading"} {timedCategory && <span className="font-light">{dayjs(timedCategory.startDate).format("YYYY MMMM")}</span>}</h2>
             {isLoading && <LoadingPage />}
-            {!isLoading && !data && <NotFoundPage />}
+            {!isLoading && !timedCategory && <NotFoundPage />}
             {
-                (data && !isLoading) &&
+                (timedCategory && !isLoading) &&
                 <div className="mt-4">
                     <div className="flex justify-between mb-4 dark:bg-slate-700 bg-slate-200 p-4 rounded">
                         <span className="flex">
                             <p className="mr-2">Budget</p>
-                            <p>€{data.budget}</p>
+                            <p>€{timedCategory.budget}</p>
                         </span>
                         |
                         <span className="flex">
@@ -45,7 +53,7 @@ const TimedCategory: NextPage = () => {
                         </span>
                     </div>
                     {
-                        data.transactions.map(transaction => <TransactionCard key={transaction.id} transaction={transaction} />)
+                        timedCategory.transactions.map(transaction => <TransactionCard key={transaction.id} transaction={transaction} />)
                     }
                 </div>
             }
