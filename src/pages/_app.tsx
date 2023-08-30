@@ -7,15 +7,28 @@ import { api } from "~/utils/api";
 import "~/styles/globals.css";
 import Layout from "~/components/layout";
 import { Toaster } from "~/components/ui/toaster";
-
+import { PeriodContext } from "~/context/period";
+import dayjs from "dayjs";
+import { useState } from "react";
 const MyApp: AppType = ({ Component, pageProps }) => {
+
+  const [queryDate, setQueryDate] = useState(dayjs());
+
+
   return (
     <ClerkProvider {...pageProps}>
       <ThemeProvider attribute="class">
-        <Toaster />
-        <Layout>
-          <Component {...pageProps} />
-        </Layout>
+        <PeriodContext.Provider value={{
+          date: queryDate,
+          increaseMonth: () => setQueryDate(o => o.set('month', o.month() + 1)),
+          decreaseMonth: () => setQueryDate(o => o.set('month', o.month() - 1)),
+          setPeriod: (date: dayjs.Dayjs) => setQueryDate(date)
+        }}>
+          <Toaster />
+          <Layout>
+            <Component {...pageProps} />
+          </Layout>
+        </PeriodContext.Provider>
       </ThemeProvider>
     </ClerkProvider>
   );
