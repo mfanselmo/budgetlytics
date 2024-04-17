@@ -6,8 +6,8 @@ generator client {
 }
 
 datasource db {
-    provider     = "mysql"
-    url          = env("DATABASE_URL")
+    provider     = "postgres"
+    url    = env("POSTGRES_URL_NON_POOLING")
     relationMode = "prisma"
 }
 
@@ -19,6 +19,7 @@ model Category {
     name   String
     userId String
     budget Int
+    currency Currency @default(CLP)
     timedCategories TimedCategory[]
 
     @@unique([userId, name], map: "Category name must be unique")
@@ -35,6 +36,7 @@ model TimedCategory {
     name String
     userId String
     currentAmount Int @default(0)
+    currency Currency @default(CLP)
 
     categoryId String?
     category Category? @relation(fields: [categoryId], references: [id], onDelete: SetNull)
@@ -52,6 +54,7 @@ model Transaction {
     name String
     userId String
     amount Int
+    currency Currency @default(CLP)
 
     timedCategoryId String
     timedCategory TimedCategory @relation(fields: [timedCategoryId], references: [id], onDelete: Cascade)
@@ -59,4 +62,9 @@ model Transaction {
     @@index([timedCategoryId])
     @@index([userId])
 
+}
+
+enum Currency {
+  EUR
+  CLP
 }

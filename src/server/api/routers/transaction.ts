@@ -2,8 +2,8 @@ import { z } from "zod";
 
 import { createTRPCRouter, privateProcedure } from "~/server/api/trpc";
 import { TRPCError } from "@trpc/server";
-import dayjs, { type Dayjs } from 'dayjs'
-
+import dayjs, { type Dayjs } from "dayjs";
+import { CURRENCIES } from "~/helpers/currency";
 
 export const transactionRouter = createTRPCRouter({
   create: privateProcedure
@@ -12,8 +12,9 @@ export const transactionRouter = createTRPCRouter({
         name: z.string().min(1).max(280),
         date: z.date(),
         timedCategoryId: z.string().cuid(),
-        amount: z.number()
-      })
+        amount: z.number(),
+        currency: z.enum(CURRENCIES),
+      }),
     )
     .mutation(async ({ ctx, input }) => {
       const userId = ctx.userId;
@@ -43,7 +44,8 @@ export const transactionRouter = createTRPCRouter({
           amount: input.amount,
           name: input.name,
           createdAt: input.date,
-          timedCategoryId: input.timedCategoryId
+          currency: input.currency,
+          timedCategoryId: input.timedCategoryId,
         },
       });
 
@@ -52,39 +54,43 @@ export const transactionRouter = createTRPCRouter({
   getAll: privateProcedure.query(({ ctx }) => {
     return ctx.prisma.transaction.findMany({
       where: {
-        userId: ctx.userId
+        userId: ctx.userId,
       },
       take: 100,
       orderBy: {
-        createdAt: 'asc'
-      }
+        createdAt: "asc",
+      },
     });
   }),
   getById: privateProcedure
-    .input(z.object({
-      id: z.string().cuid()
-    }))
+    .input(
+      z.object({
+        id: z.string().cuid(),
+      }),
+    )
     .query(({ ctx, input }) => {
       return ctx.prisma.transaction.findFirstOrThrow({
         where: {
           userId: ctx.userId,
-          id: input.id
+          id: input.id,
         },
         include: {
-          timedCategory: true
-        }
+          timedCategory: true,
+        },
       });
     }),
   delete: privateProcedure
-    .input(z.object({
-      id: z.string().cuid()
-    }))
+    .input(
+      z.object({
+        id: z.string().cuid(),
+      }),
+    )
     .mutation(({ ctx, input }) => {
       return ctx.prisma.transaction.deleteMany({
         where: {
           userId: ctx.userId,
-          id: input.id
+          id: input.id,
         },
       });
-    })
+    }),
 });

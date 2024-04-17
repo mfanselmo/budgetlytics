@@ -6,7 +6,7 @@ const publicPaths = ["/"];
 
 const isPublic = (path: string) => {
   return publicPaths.find((x) =>
-    path.match(new RegExp(`^${x}$`.replace("*$", "($|/)")))
+    path.match(new RegExp(`^${x}$`.replace("*$", "($|/)"))),
   );
 };
 

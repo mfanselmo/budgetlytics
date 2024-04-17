@@ -50,32 +50,30 @@ import { Prisma } from "@prisma/client";
 const t = initTRPC.context<typeof createTRPCContext>().create({
   transformer: superjson,
   errorFormatter({ shape, error }) {
-
     let message;
     if (error.cause instanceof ZodError) {
-      message = Object.entries(error.cause.flatten().fieldErrors).reduce((acc, cause) => {
-        const field = cause[0]
-        const mes = (cause[1] || ['']).join('')
+      message = Object.entries(error.cause.flatten().fieldErrors).reduce(
+        (acc, cause) => {
+          const field = cause[0];
+          const mes = (cause[1] || [""]).join("");
 
-        return `${acc}\n${field} - ${mes}`.trimStart()
-        
-      },"")
+          return `${acc}\n${field} - ${mes}`.trimStart();
+        },
+        "",
+      );
     } else if (error.cause instanceof Prisma.PrismaClientKnownRequestError) {
-      message = error.cause.message
+      message = error.cause.message;
     } else if (error instanceof TRPCError) {
-      message = error.message
+      message = error.message;
     }
-
-
 
     return {
       ...shape,
       data: {
         code: shape.data.code,
-        message
-      }
-    }
-
+        message,
+      },
+    };
   },
 });
 

@@ -10,20 +10,21 @@ import { CategoryCard } from "~/components/category-card";
 import PeriodChange from "~/components/period-change";
 
 const AllCategories: NextPage = () => {
-  const { data, isLoading } = api.category.getAll.useQuery()
-  const period = useContext(PeriodContext)
+  const { data, isLoading } = api.category.getAll.useQuery();
+  const period = useContext(PeriodContext);
 
   return (
     <>
       <h2>Categories</h2>
       {isLoading && <LoadingPage />}
       {!isLoading && !data && <NotFoundPage />}
-      {
-        (data && !isLoading) &&
+      {data && !isLoading && (
         <div className="mt-4">
-          {data.map(category => <CategoryCard category={category} key={category.id} />)}
+          {data.map((category) => (
+            <CategoryCard category={category} key={category.id} />
+          ))}
         </div>
-      }
+      )}
     </>
   );
 };

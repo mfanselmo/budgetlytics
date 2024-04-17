@@ -1,44 +1,49 @@
 import { z } from "zod";
 import { type NextPage } from "next";
-import { type SubmitHandler, useForm, Controller } from "react-hook-form";
+import { type SubmitHandler, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useToast } from "~/hooks/use-toast"
-
+import { useToast } from "~/hooks/use-toast";
 
 import { api } from "~/utils/api";
 import { Input } from "~/components/ui/input";
 import { Button } from "~/components/ui/button";
 import { Label } from "~/components/ui/label";
 import { useRouter } from "next/router";
-import dayjs from 'dayjs'
 import { useContext, useEffect } from "react";
 import { PeriodContext } from "~/context/period";
-// import Select from 'react-select'
-import Select from '~/components/ui/select'
+import Select from "~/components/ui/select";
 import PeriodChange from "~/components/period-change";
-
-
+import { CURRENCIES } from "~/helpers/currency";
 
 const NewTransaction: NextPage = () => {
+  const period = useContext(PeriodContext);
+  const { toast } = useToast();
+  const router = useRouter();
 
-  const period = useContext(PeriodContext)
-  const { toast } = useToast()
-  const router = useRouter()
-
-  const formSchema = z
-    .object({
-      name: z.string().min(1, "Name is required").max(280),
-      date: z.date().min(period.date.startOf('M').toDate(), "Must be inside of selected period").max(period.date.endOf('M').toDate(), "Must be inside of selected period"),
-      timedCategoryId: z.string().cuid(),
-      amount: z.number()
-    })
+  const formSchema = z.object({
+    name: z.string().min(1, "Name is required").max(280),
+    date: z
+      .date()
+      .min(
+        period.date.startOf("M").toDate(),
+        "Must be inside of selected period",
+      )
+      .max(
+        period.date.endOf("M").toDate(),
+        "Must be inside of selected period",
+      ),
+    timedCategoryId: z.string().cuid(),
+    currency: z.enum(CURRENCIES),
+    amount: z.number(),
+  });
 
   type FormSchemaType = z.infer<typeof formSchema>;
 
-  const { data: timedCategories, isLoading: timedCategoriesLoading } = api.timedCategory.getAllInPeriod.useQuery({
-    month: period.date.month(),
-    year: period.date.year()
-  })
+  const { data: timedCategories, isLoading: timedCategoriesLoading } =
+    api.timedCategory.getAllInPeriod.useQuery({
+      month: period.date.month(),
+      year: period.date.year(),
+    });
 
   const {
     control,
@@ -49,20 +54,30 @@ const NewTransaction: NextPage = () => {
   } = useForm<FormSchemaType>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      timedCategoryId: router.query.timedCategoryId as (string | undefined)
-    }
+      timedCategoryId: router.query.timedCategoryId as string | undefined,
+    },
   });
 
+  // Only run on initial load
   useEffect(() => {
     if (timedCategories) {
-      const urlTimedCategory = timedCategories.find(t => t.id === router.query.timedCategoryId)
-      if (urlTimedCategory) setValue("timedCategoryId", urlTimedCategory.id, { shouldValidate: true })
-      else setValue("timedCategoryId", undefined as unknown as string, { shouldValidate: true })
+      const urlTimedCategory = timedCategories.find(
+        (t) => t.id === router.query.timedCategoryId,
+      );
+      if (urlTimedCategory) {
+        setValue("timedCategoryId", urlTimedCategory.id, {
+          shouldValidate: true,
+        });
+        setValue("currency", urlTimedCategory.currency, {
+          shouldValidate: true,
+        });
+      } else {
+        setValue("timedCategoryId", undefined as unknown as string, {
+          shouldValidate: true,
+        });
+      }
     }
-
-  }, [period.date, router.query.timedCategoryId, setValue, timedCategories])
-
-
+  }, [period.date, router.query.timedCategoryId, setValue, timedCategories]);
 
   const { mutate, isLoading: isCreating } = api.transaction.create.useMutation({
     // onSuccess: async () => {
@@ -73,50 +88,82 @@ const NewTransaction: NextPage = () => {
     // },
     onError: (e) => {
       toast({
-        variant: 'destructive',
+        variant: "destructive",
         title: e.data?.code || "Error",
-        description: e.data?.message || "Unknown error"
-      })
+        description: e.data?.message || "Unknown error",
+      });
     },
   });
 
-  const onSubmit: SubmitHandler<FormSchemaType> = data => void mutate(data);
+  const setCurrency = (timedCategoryId: string) => {
+    const timedCategory = timedCategories?.find(
+      (t) => t.id === timedCategoryId,
+    );
+    if (!timedCategory) return;
+    setValue("currency", timedCategory.currency, {
+      shouldValidate: true,
+    });
+  };
+
+  const onSubmit: SubmitHandler<FormSchemaType> = (data) => void mutate(data);
 
   return (
     <>
       <h2 className="mb-1">New Transaction</h2>
       <div className="flex justify-between items-center mb-4">
         Period {period.date.format("YYYY MMMM")}
-
         <PeriodChange />
       </div>
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 max-w-sm mx-auto">
-        <Label label={'Category'}>
+      <form
+        onSubmit={handleSubmit(onSubmit)}
+        className="space-y-4 max-w-sm mx-auto"
+      >
+        <Label label={"Category"}>
           <Select
+            onSelect={setCurrency}
             name="timedCategoryId"
             control={control}
             isLoading={timedCategoriesLoading}
             options={timedCategories}
-            labelName={'name'}
-            valueName={'id'}
+            labelName={"name"}
+            valueName={"id"}
             error={!!errors.timedCategoryId}
             errorText={errors.timedCategoryId?.message}
           />
         </Label>
-        <Label label={'Name'}>
-          <Input autoComplete={"off"} {...register("name")} error={!!errors.name} errorText={errors.name?.message} placeholder="Food" />
+        <Label label={"Name"}>
+          <Input
+            autoComplete={"off"}
+            {...register("name")}
+            error={!!errors.name}
+            errorText={errors.name?.message}
+            placeholder="Food"
+          />
         </Label>
-        <Label label={'amount'}>
-          <Input type="number" error={!!errors.amount} errorText={errors.amount?.message} {...register("amount", { valueAsNumber: true })} placeholder="5" />
+        <Label label={"amount"}>
+          <Input
+            type="number"
+            error={!!errors.amount}
+            errorText={errors.amount?.message}
+            {...register("amount", { valueAsNumber: true })}
+            placeholder="5"
+          />
         </Label>
-        <Label label={'Date'}>
-          <Input type="date" autoComplete={"off"} defaultValue={new Date().toISOString().slice(0, 10)} {...register("date", { valueAsDate: true })} error={!!errors.date} errorText={errors.date?.message} />
+        <Label label={"Date"}>
+          <Input
+            type="date"
+            autoComplete={"off"}
+            defaultValue={new Date().toISOString().slice(0, 10)}
+            {...register("date", { valueAsDate: true })}
+            error={!!errors.date}
+            errorText={errors.date?.message}
+          />
         </Label>
 
-
-        <Button className="w-full" type="submit" loading={isCreating}>Create</Button>
-
-      </form >
+        <Button className="w-full" type="submit" loading={isCreating}>
+          Create
+        </Button>
+      </form>
     </>
   );
 };

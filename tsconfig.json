@@ -27,7 +27,8 @@
     "**/*.ts",
     "**/*.tsx",
     "**/*.cjs",
-    "**/*.mjs"
-, "jakefile.js"  ],
+    "**/*.mjs",
+    "jakefile.js"
+  ],
   "exclude": ["node_modules"]
 }

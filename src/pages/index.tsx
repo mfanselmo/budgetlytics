@@ -12,29 +12,34 @@ import NewMonthButton from "~/components/new-month-button";
 import { TotalCard } from "~/components/total-card";
 
 const Home: NextPage = () => {
-  const period = useContext(PeriodContext)
-  const { data: timedCategories, isLoading } = api.timedCategory.getAllInPeriodWithTransactions.useQuery({
-    month: period.date.month(),
-    year: period.date.year(),
-  })
+  const period = useContext(PeriodContext);
+  const { data: timedCategories, isLoading } =
+    api.timedCategory.getAllInPeriodWithTransactions.useQuery({
+      month: period.date.month(),
+      year: period.date.year(),
+    });
   return (
     <>
       <h2 className="items-baseline flex justify-between">
-        <span >{period.date.format("MMMM YYYY")}</span>
+        <span>{period.date.format("MMMM YYYY")}</span>
         <PeriodChange />
       </h2>
       {isLoading && <LoadingPage />}
       {!isLoading && !timedCategories && <NotFoundPage />}
-      {
-        (timedCategories && !isLoading) &&
+      {timedCategories && !isLoading && (
         <div className="mt-4">
           <div>
-            {timedCategories.map(timedCategory => <TimedCategoryCard timedCategory={timedCategory} key={timedCategory.id} />)}
+            {timedCategories.map((timedCategory) => (
+              <TimedCategoryCard
+                timedCategory={timedCategory}
+                key={timedCategory.id}
+              />
+            ))}
           </div>
           <TotalCard timedCategories={timedCategories} />
           {!timedCategories.length && <NewMonthButton />}
         </div>
-      }
+      )}
     </>
   );
 };

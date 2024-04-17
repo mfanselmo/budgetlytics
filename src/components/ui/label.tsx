@@ -1,45 +1,43 @@
-"use client"
+"use client";
 
-import * as React from "react"
-import * as LabelPrimitive from "@radix-ui/react-label"
+import * as React from "react";
+import * as LabelPrimitive from "@radix-ui/react-label";
 
-import { cn } from "~/lib/utils"
+import { cn } from "~/lib/utils";
 
 const Label = React.forwardRef<
-    React.ElementRef<typeof LabelPrimitive.Root>,
-    React.ComponentPropsWithoutRef<typeof LabelPrimitive.Root> & {
-        label: string
-    }
+  React.ElementRef<typeof LabelPrimitive.Root>,
+  React.ComponentPropsWithoutRef<typeof LabelPrimitive.Root> & {
+    label: string;
+  }
 >(({ className, label, ...props }, ref) => {
-    if (!props.children)
-        return (
-            <LabelPrimitive.Root
-                ref={ref}
-                className={cn(
-                    "text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70",
-                    className
-                )}
-                {...props}
-            />
-        )
+  if (!props.children)
     return (
-        <div className="grid w-full items-center">
-            <LabelPrimitive.Root
-                ref={ref}
-                className={cn(
-                    "text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 mb-1.5",
-                    className
-                )}
-                {...props}
-            >
-                {label}
-            </LabelPrimitive.Root>
-            {props.children}
-        </div>
-    )
+      <LabelPrimitive.Root
+        ref={ref}
+        className={cn(
+          "text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70",
+          className,
+        )}
+        {...props}
+      />
+    );
+  return (
+    <div className="grid w-full items-center">
+      <LabelPrimitive.Root
+        ref={ref}
+        className={cn(
+          "text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 mb-1.5",
+          className,
+        )}
+        {...props}
+      >
+        {label}
+      </LabelPrimitive.Root>
+      {props.children}
+    </div>
+  );
+});
+Label.displayName = LabelPrimitive.Root.displayName;
 
-}
-)
-Label.displayName = LabelPrimitive.Root.displayName
-
-export { Label }
+export { Label };

@@ -1,4 +1,10 @@
-import { SignInButton, SignedIn, SignedOut, UserButton, useUser } from "@clerk/nextjs";
+import {
+  SignInButton,
+  SignedIn,
+  SignedOut,
+  UserButton,
+  useUser,
+} from "@clerk/nextjs";
 
 import Head from "next/head";
 import Link from "next/link";
@@ -12,16 +18,15 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "~/components/ui/dropdown-menu"
+} from "~/components/ui/dropdown-menu";
 import { useTheme } from "next-themes";
 import { SunMoon } from "lucide-react";
 import { useRouter } from "next/router";
 
 export default function Layout({ children }: React.PropsWithChildren) {
-  const { user } = useUser()
+  const { user } = useUser();
   const { theme, setTheme } = useTheme();
-  const router = useRouter()
-
+  const router = useRouter();
 
   return (
     <>
@@ -32,39 +37,37 @@ export default function Layout({ children }: React.PropsWithChildren) {
       </Head>
       <main className="flex min-h-screen flex-col">
         <header className="sticky top-0 z-40 w-full border-b border-b-slate-200 bg-white dark:border-b-slate-700 dark:bg-slate-900">
-
           <div className="mx-auto container flex py-2 pl-6 pr-2 justify-between items-center">
-            <Link href={"/"} >
+            <Link href={"/"}>
               <p className="large">Budgetlytics</p>
             </Link>
             <div className="flex space-x-2">
-              {user && <UserButton userProfileMode={'modal'} />}
+              {user && <UserButton userProfileMode={"modal"} />}
 
-              <DropdownMenu >
+              <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button variant="outline" size={'sm'}>Menu</Button>
+                  <Button variant="outline" size={"sm"}>
+                    Menu
+                  </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent className={"mr-2"}>
                   <DropdownMenuLabel>Actions</DropdownMenuLabel>
                   <DropdownMenuSeparator />
                   <DropdownMenuItem
-                    onClick={() => theme === "dark" ? setTheme('light') : setTheme("dark")}>
+                    onClick={() =>
+                      theme === "dark" ? setTheme("light") : setTheme("dark")
+                    }
+                  >
                     <span className="pr-2">Change theme</span> <SunMoon />
                   </DropdownMenuItem>
                   <DropdownMenuItem>
-                    <Link href="/category">
-                      All categories
-                    </Link>
+                    <Link href="/category">All categories</Link>
                   </DropdownMenuItem>
                   <DropdownMenuItem>
-                    <Link href="/category/new">
-                      New category
-                    </Link>
+                    <Link href="/category/new">New category</Link>
                   </DropdownMenuItem>
                   <DropdownMenuItem asChild>
-                    <Link href="/transaction/new">
-                      New transaction
-                    </Link>
+                    <Link href="/transaction/new">New transaction</Link>
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
@@ -74,18 +77,14 @@ export default function Layout({ children }: React.PropsWithChildren) {
           </div>
         </header>
         <div className="h-full mx-auto container px-6 py-6">
-          <SignedIn>
-            {children}
-          </SignedIn>
+          <SignedIn>{children}</SignedIn>
           <SignedOut>
             <SignInButton mode="modal">
-              <Button className="my-auto">
-                Sign in
-              </Button>
+              <Button className="my-auto">Sign in</Button>
             </SignInButton>
           </SignedOut>
         </div>
-      </main >
+      </main>
     </>
-  )
+  );
 }
