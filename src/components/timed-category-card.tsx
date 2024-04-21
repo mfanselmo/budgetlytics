@@ -54,7 +54,7 @@ export const TimedCategoryCard = ({
         </Link>
       </div>
       <div className="flex items-center mt-1">
-        <span className="mr-2 text-sm">
+        <span className="mr-4 text-sm">
           <span className="font-extralight mr-0.5">
             {formatCurrency(totalUsed, timedCategory.currency)}/
           </span>

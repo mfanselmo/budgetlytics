@@ -10,10 +10,14 @@ const PeriodChange = () => {
 
   return (
     <div className="flex ">
-      <Button size={"sm"} variant={"ghost"} onClick={period.previousPeriod}>
+      <Button
+        size={"square-sm"}
+        variant={"ghost"}
+        onClick={period.previousPeriod}
+      >
         <ChevronLeft />
       </Button>
-      <Button size={"sm"} variant={"ghost"} onClick={period.nextPeriod}>
+      <Button size={"square-sm"} variant={"ghost"} onClick={period.nextPeriod}>
         <ChevronRight />
       </Button>
     </div>

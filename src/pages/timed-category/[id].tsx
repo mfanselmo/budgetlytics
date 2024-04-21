@@ -59,15 +59,15 @@ const TimedCategory: NextPage = () => {
 
   return (
     <>
-      <h2 className="flex justify-between items-baseline">
-        {timedCategory?.name || "Loading"}{" "}
+      <div className="flex flex-col justify-between items-baseline">
+        <h2 className="border-b-0">{timedCategory?.name || "Loading"}</h2>
         {timedCategory && (
-          <span className="font-light">
-            {dayjs(timedCategory.startDate).format("DD YYYY MMMM")} -{" "}
-            {dayjs(timedCategory.endDate).format("DD YYYY MMMM")}
-          </span>
+          <h3 className="font-light">
+            {dayjs(timedCategory.startDate).format("DD MMMM YYYY")} -{" "}
+            {dayjs(timedCategory.endDate).format("DD MMMM YYYY")}
+          </h3>
         )}
-      </h2>
+      </div>
       {isLoading && <LoadingPage />}
       {!isLoading && !timedCategory && <NotFoundPage />}
       {timedCategory && !isLoading && (

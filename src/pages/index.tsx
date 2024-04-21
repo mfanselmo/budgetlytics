@@ -12,8 +12,8 @@ import { TotalCard } from "~/components/total-card";
 const Home: NextPage = () => {
   const period = useContext(PeriodContext);
 
-  const displayPeriodStartString = period.periodStart.format("DD MMMM YYYY");
-  const displayPeriodEndString = period.periodEnd.format("DD MMMM YYYY");
+  const displayPeriodStartString = period.periodStart.format("DD MMMM");
+  const displayPeriodEndString = period.periodEnd.format("DD MMMM");
   const { data: timedCategories, isLoading } =
     api.timedCategory.getAllInPeriodWithTransactions.useQuery({
       startDate: period.periodStart.toDate(),
@@ -21,12 +21,12 @@ const Home: NextPage = () => {
     });
   return (
     <>
-      <h2 className="items-baseline flex justify-between">
-        <span>
+      <div className="items-center flex justify-between">
+        <h4>
           {displayPeriodStartString} - {displayPeriodEndString}
-        </span>
+        </h4>
         <PeriodChange />
-      </h2>
+      </div>
       {isLoading && <LoadingPage />}
       {!isLoading && !timedCategories && <NotFoundPage />}
       {timedCategories && !isLoading && (
