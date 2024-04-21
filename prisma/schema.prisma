@@ -64,6 +64,14 @@ model Transaction {
 
 }
 
+model Settings {
+    id String @id @default(cuid())
+    periodStartDay Int @default(1)
+
+    userId String
+    @@index([userId])
+}
+
 enum Currency {
   EUR
   CLP

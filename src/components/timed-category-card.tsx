@@ -77,11 +77,8 @@ export const SimplifiedTimedCategoryCard = ({
   void router.prefetch(`/transaction/new?timedCategoryId=${timedCategory.id}`);
 
   const handleClick = () => {
-    period.setPeriod(
-      dayjs()
-        .set("month", dayjs(timedCategory.startDate).get("month"))
-        .set("year", dayjs(timedCategory.startDate).get("year")),
-    );
+    // Manually set the date to the period of the timed category in the settings: Equivalent to scrolling to the date
+    period.setPeriod(dayjs(timedCategory.startDate));
     void router.push({
       pathname: "/transaction/new",
       query: { timedCategoryId: timedCategory.id },

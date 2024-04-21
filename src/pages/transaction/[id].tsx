@@ -90,7 +90,7 @@ const Transaction: NextPage<
             <CardHeader>
               <CardTitle>{data.name}</CardTitle>
               <CardDescription>
-                {dayjs(data.createdAt).format("DD/MM/YYYY")}
+                {dayjs(data.createdAt).format("DD/MM/YYYY HH:mm")}
               </CardDescription>
             </CardHeader>
             <CardContent>

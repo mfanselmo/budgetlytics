@@ -14,24 +14,25 @@ import { PeriodContext } from "~/context/period";
 import Select from "~/components/ui/select";
 import PeriodChange from "~/components/period-change";
 import { CURRENCIES } from "~/helpers/currency";
+import dayjs from "dayjs";
 
 const NewTransaction: NextPage = () => {
   const period = useContext(PeriodContext);
   const { toast } = useToast();
   const router = useRouter();
 
+  console.log(period.periodStart.toDate());
+  console.log(period.periodEnd.toDate());
+
   const formSchema = z.object({
     name: z.string().min(1, "Name is required").max(280),
     date: z
       .date()
       .min(
-        period.date.startOf("M").toDate(),
+        period.periodStart.subtract(1, "day").toDate(),
         "Must be inside of selected period",
       )
-      .max(
-        period.date.endOf("M").toDate(),
-        "Must be inside of selected period",
-      ),
+      .max(period.periodEnd.toDate(), "Must be inside of selected period"),
     timedCategoryId: z.string().cuid(),
     currency: z.enum(CURRENCIES),
     amount: z.number(),
@@ -41,8 +42,8 @@ const NewTransaction: NextPage = () => {
 
   const { data: timedCategories, isLoading: timedCategoriesLoading } =
     api.timedCategory.getAllInPeriod.useQuery({
-      month: period.date.month(),
-      year: period.date.year(),
+      startDate: period.periodStart.toDate(),
+      endDate: period.periodEnd.toDate(),
     });
 
   const {
@@ -77,7 +78,7 @@ const NewTransaction: NextPage = () => {
         });
       }
     }
-  }, [period.date, router.query.timedCategoryId, setValue, timedCategories]);
+  }, [router.query.timedCategoryId, setValue, timedCategories]);
 
   const { mutate, isLoading: isCreating } = api.transaction.create.useMutation({
     // onSuccess: async () => {
@@ -105,13 +106,26 @@ const NewTransaction: NextPage = () => {
     });
   };
 
-  const onSubmit: SubmitHandler<FormSchemaType> = (data) => void mutate(data);
+  const onSubmit: SubmitHandler<FormSchemaType> = (data) => {
+    // take from the form date only the date, month and year. Apply the current time to that date
+    const dateInformation = dayjs(data.date);
+    console.log(dateInformation.get("date"));
+    void mutate({
+      ...data,
+      date: dayjs()
+        .set("year", dateInformation.get("year"))
+        .set("month", dateInformation.get("month"))
+        .set("date", dateInformation.get("date") + 1)
+        .toDate(),
+    });
+  };
 
   return (
     <>
       <h2 className="mb-1">New Transaction</h2>
       <div className="flex justify-between items-center mb-4">
-        Period {period.date.format("YYYY MMMM")}
+        Period {period.periodStart.format("DD MMMM YYYY")} -{" "}
+        {period.periodEnd.format("DD MMMM YYYY")}
         <PeriodChange />
       </div>
       <form

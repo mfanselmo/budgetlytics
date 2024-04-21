@@ -63,7 +63,8 @@ const TimedCategory: NextPage = () => {
         {timedCategory?.name || "Loading"}{" "}
         {timedCategory && (
           <span className="font-light">
-            {dayjs(timedCategory.startDate).format("YYYY MMMM")}
+            {dayjs(timedCategory.startDate).format("DD YYYY MMMM")} -{" "}
+            {dayjs(timedCategory.endDate).format("DD YYYY MMMM")}
           </span>
         )}
       </h2>

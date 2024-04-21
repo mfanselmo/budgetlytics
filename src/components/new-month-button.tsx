@@ -13,13 +13,13 @@ const NewMonthButton = () => {
   const period = useContext(PeriodContext);
   const { toast } = useToast();
 
-  const { mutate: generateNewMonthTimedCategories, isLoading: isCreating } =
-    api.timedCategory.generateNewMonthTimedCategories.useMutation({
+  const { mutate: generateNewPeriodTimedCategories, isLoading: isCreating } =
+    api.timedCategory.generateNewPeriodTimedCategories.useMutation({
       onSuccess: async () => {
         await ctx.timedCategory.getAllInPeriodWithTransactions.invalidate(
           {
-            month: period.date.month(),
-            year: period.date.year(),
+            startDate: period.periodStart.toDate(),
+            endDate: period.periodEnd.toDate(),
           },
           {
             type: "all",
@@ -40,9 +40,9 @@ const NewMonthButton = () => {
       size={"sm"}
       loading={isCreating}
       onClick={() =>
-        generateNewMonthTimedCategories({
-          month: period.date.month(),
-          year: period.date.year(),
+        generateNewPeriodTimedCategories({
+          startDate: period.periodStart.toDate(),
+          endDate: period.periodEnd.toDate(),
         })
       }
     >

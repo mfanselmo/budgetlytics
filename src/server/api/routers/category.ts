@@ -1,7 +1,6 @@
 import { z } from "zod";
 
 import { createTRPCRouter, privateProcedure } from "~/server/api/trpc";
-import dayjs from "dayjs";
 import { CURRENCIES } from "~/helpers/currency";
 
 export const categoryRouter = createTRPCRouter({
@@ -9,12 +8,25 @@ export const categoryRouter = createTRPCRouter({
     .input(
       z.object({
         name: z.string().min(1).max(280),
-        budget: z.number().positive(),
+        budget: z.number().nonnegative(),
         currency: z.enum(CURRENCIES),
+        newTimedCategoryData: z
+          .object({
+            startDate: z.date(),
+            endDate: z.date(),
+          })
+          .optional(),
       }),
     )
     .mutation(async ({ ctx, input }) => {
       const userId = ctx.userId;
+      const userSettings = await ctx.prisma.settings.findFirst({
+        where: {
+          userId,
+        },
+      });
+
+      if (!userSettings) throw Error("User settings not found");
 
       const category = await ctx.prisma.category.create({
         data: {
@@ -22,14 +34,15 @@ export const categoryRouter = createTRPCRouter({
           name: input.name,
           budget: input.budget,
           currency: input.currency,
-          timedCategories: {
+          timedCategories: input.newTimedCategoryData && {
             create: {
               userId,
               name: input.name,
               budget: input.budget,
               currency: input.currency,
-              startDate: dayjs().startOf("month").toDate(),
-              endDate: dayjs().endOf("month").toDate(),
+              // Automatically create a timed category for the current period
+              startDate: input.newTimedCategoryData.startDate,
+              endDate: input.newTimedCategoryData.endDate,
             },
           },
         },

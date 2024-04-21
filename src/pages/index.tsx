@@ -1,9 +1,7 @@
 import { type NextPage } from "next";
-import Link from "next/link";
 import { useContext } from "react";
 import { TimedCategoryCard } from "~/components/timed-category-card";
 import { LoadingPage } from "~/components/loading";
-import { Button } from "~/components/ui/button";
 import { PeriodContext } from "~/context/period";
 import { api } from "~/utils/api";
 import NotFoundPage from "./404";
@@ -13,15 +11,20 @@ import { TotalCard } from "~/components/total-card";
 
 const Home: NextPage = () => {
   const period = useContext(PeriodContext);
+
+  const displayPeriodStartString = period.periodStart.format("DD MMMM YYYY");
+  const displayPeriodEndString = period.periodEnd.format("DD MMMM YYYY");
   const { data: timedCategories, isLoading } =
     api.timedCategory.getAllInPeriodWithTransactions.useQuery({
-      month: period.date.month(),
-      year: period.date.year(),
+      startDate: period.periodStart.toDate(),
+      endDate: period.periodEnd.toDate(),
     });
   return (
     <>
       <h2 className="items-baseline flex justify-between">
-        <span>{period.date.format("MMMM YYYY")}</span>
+        <span>
+          {displayPeriodStartString} - {displayPeriodEndString}
+        </span>
         <PeriodChange />
       </h2>
       {isLoading && <LoadingPage />}

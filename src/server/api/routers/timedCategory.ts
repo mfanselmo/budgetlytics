@@ -1,60 +1,29 @@
-import { TypeOf, z } from "zod";
+import { z } from "zod";
 import { createTRPCRouter, privateProcedure } from "~/server/api/trpc";
-import dayjs, { type Dayjs } from "dayjs";
-import { Months, MonthsEnum } from "~/helpers/date";
 
 export const timedCategoryRouter = createTRPCRouter({
-  //   create: privateProcedure
-  //   .input(
-  //     z.object({
-  //       name: z.string().min(1).max(280),
-  //       budget: z.number().positive()
-  //     })
-  //   )
-  //   .mutation(async ({ ctx, input }) => {
-  //     const userId = ctx.userId;
-
-  //     const category = await ctx.prisma.category.create({
-  //       data: {
-  //         userId,
-  //         name: input.name,
-  //         budget: input.budget,
-  //         timedCategories: {
-  //           create: {
-  //             userId,
-  //             budget: input.budget,
-  //             startDate: dayjs().startOf('month').toDate(),
-  //             endDate: dayjs().endOf('month').toDate()
-  //           }
-  //         }
-  //       },
-  //     });
-
-  //     return category;
-  //   }),
-  // getAll: privateProcedure.query(({ ctx }) => {
-  //   return ctx.prisma.category.findMany({
-  //     where: {
-  //       userId: ctx.userId
-  //     }
-  //   });
-  // }),
-  generateNewMonthTimedCategories: privateProcedure
+  generateNewPeriodTimedCategories: privateProcedure
     .input(
       z.object({
-        month: z.number().int().min(0).max(11).default(dayjs().month()),
-        year: z.number().int().min(1960).max(2055).default(dayjs().year()),
+        startDate: z.date(),
+        endDate: z.date(),
       }),
     )
     .mutation(async ({ ctx, input }) => {
       const userId = ctx.userId;
-      const date = dayjs().set("month", input.month).set("year", input.year);
 
       const userCategories = await ctx.prisma.category.findMany({
         where: {
           userId,
         },
       });
+
+      const userSettings = await ctx.prisma.settings.findFirst({
+        where: {
+          userId,
+        },
+      });
+      if (!userSettings) throw Error("User settings not found");
 
       const promises = userCategories.map((cat) => {
         return ctx.prisma.timedCategory.create({
@@ -64,8 +33,8 @@ export const timedCategoryRouter = createTRPCRouter({
             budget: cat.budget,
             categoryId: cat.id,
             currency: cat.currency,
-            startDate: date.startOf("month").toDate(),
-            endDate: date.endOf("month").toDate(),
+            startDate: input.startDate,
+            endDate: input.endDate,
           },
         });
       });
@@ -109,8 +78,8 @@ export const timedCategoryRouter = createTRPCRouter({
   getAllInPeriod: privateProcedure
     .input(
       z.object({
-        month: z.number().int().min(0).max(11).default(dayjs().month()),
-        year: z.number().int().min(1960).max(2055).default(dayjs().year()),
+        startDate: z.date(),
+        endDate: z.date(),
       }),
     )
     .query(({ ctx, input }) => {
@@ -118,16 +87,10 @@ export const timedCategoryRouter = createTRPCRouter({
         where: {
           userId: ctx.userId,
           startDate: {
-            lte: dayjs()
-              .set("month", input.month)
-              .set("year", input.year)
-              .toDate(),
+            lte: input.startDate,
           },
           endDate: {
-            gte: dayjs()
-              .set("month", input.month)
-              .set("year", input.year)
-              .toDate(),
+            gte: input.endDate,
           },
         },
       });
@@ -135,8 +98,8 @@ export const timedCategoryRouter = createTRPCRouter({
   getAllInPeriodWithTransactions: privateProcedure
     .input(
       z.object({
-        month: z.number().int().min(0).max(11).default(dayjs().month()),
-        year: z.number().int().min(1960).max(2055).default(dayjs().year()),
+        startDate: z.date(),
+        endDate: z.date(),
       }),
     )
     .query(({ ctx, input }) => {
@@ -144,16 +107,10 @@ export const timedCategoryRouter = createTRPCRouter({
         where: {
           userId: ctx.userId,
           startDate: {
-            lte: dayjs()
-              .set("month", input.month)
-              .set("year", input.year)
-              .toDate(),
+            lte: input.startDate,
           },
           endDate: {
-            gte: dayjs()
-              .set("month", input.month)
-              .set("year", input.year)
-              .toDate(),
+            gte: input.endDate,
           },
         },
         include: {

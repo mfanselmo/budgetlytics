@@ -9,7 +9,6 @@ import {
 import Head from "next/head";
 import Link from "next/link";
 import { Button } from "~/components/ui/button";
-import ThemeButton from "./theme-button";
 
 import {
   DropdownMenu,
@@ -21,12 +20,10 @@ import {
 } from "~/components/ui/dropdown-menu";
 import { useTheme } from "next-themes";
 import { SunMoon } from "lucide-react";
-import { useRouter } from "next/router";
 
 export default function Layout({ children }: React.PropsWithChildren) {
   const { user } = useUser();
   const { theme, setTheme } = useTheme();
-  const router = useRouter();
 
   return (
     <>

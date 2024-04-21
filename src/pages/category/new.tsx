@@ -16,7 +16,7 @@ import { CURRENCIES } from "~/helpers/currency";
 
 const formSchema = z.object({
   name: z.string().min(1, "Name is required").max(280),
-  budget: z.number().positive(),
+  budget: z.number().nonnegative(),
   currency: z.enum(CURRENCIES),
 });
 
@@ -42,8 +42,8 @@ const NewCategory: NextPage = () => {
     onSuccess: async () => {
       await ctx.timedCategory.getAllInPeriod.invalidate(
         {
-          month: period.date.month(),
-          year: period.date.year(),
+          startDate: period.periodStart.toDate(),
+          endDate: period.periodEnd.toDate(),
         },
         {
           type: "all",
@@ -60,7 +60,15 @@ const NewCategory: NextPage = () => {
     },
   });
 
-  const onSubmit: SubmitHandler<FormSchemaType> = (data) => void mutate(data);
+  const onSubmit: SubmitHandler<FormSchemaType> = (data) =>
+    void mutate({
+      ...data,
+      newTimedCategoryData: {
+        startDate: period.periodStart.toDate(),
+        endDate: period.periodEnd.toDate(),
+      },
+    });
+
   return (
     <>
       <h2 className="mb-4">New Category</h2>
