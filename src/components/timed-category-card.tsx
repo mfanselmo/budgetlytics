@@ -26,7 +26,7 @@ export const TimedCategoryCard = ({
   const totalUsed = sum(timedCategory.transactions.map((t) => t.amount));
 
   return (
-    <div className="py-3 first:pt-0 flex flex-col border-b border-b-slate-200 dark:border-b-slate-700 last:border-0">
+    <div className="py-3 first:pt-0 flex flex-col border-b border-b-neutral-200 dark:border-b-neutral-700 last:border-0">
       <div className="flex items-center">
         <span className="font-bold flex-grow">{timedCategory.name}</span>
         <Link
@@ -85,7 +85,7 @@ export const SimplifiedTimedCategoryCard = ({
     });
   };
   return (
-    <div className="py-3 first:pt-0 flex flex-col border-b border-b-slate-200 dark:border-b-slate-700 last:mb-8  last:border-0">
+    <div className="py-3 first:pt-0 flex flex-col border-b border-b-neutral-200 dark:border-b-neutral-700 last:mb-8  last:border-0">
       <div className="flex items-center">
         <span className="font-bold flex-grow">
           {dayjs(timedCategory.startDate).format("YYYY MMMM")}

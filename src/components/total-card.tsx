@@ -25,7 +25,7 @@ export const TotalCard = ({
   const currency = (timedCategories[0] && timedCategories[0].currency) || "CLP";
 
   return (
-    <div className="py-3  flex flex-col mt-4 -mx-6 px-6 border-t-8 border-t-slate-100 dark:border-t-slate-700">
+    <div className="py-3  flex flex-col mt-4 -mx-6 px-6 border-t-8 border-t-neutral-100 dark:border-t-neutral-700">
       <div className="flex items-center">
         <span className="font-bold flex-grow">Total</span>
       </div>

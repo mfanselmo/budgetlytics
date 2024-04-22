@@ -33,7 +33,7 @@ export default function Layout({ children }: React.PropsWithChildren) {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <main className="flex min-h-screen flex-col">
-        <header className="sticky top-0 z-40 w-full border-b border-b-slate-200 bg-white dark:border-b-slate-700 dark:bg-slate-900">
+        <header className="sticky top-0 z-40 w-full border-b border-b-neutral-200 bg-white dark:border-b-neutral-500 dark:bg-neutral-950">
           <div className="mx-auto container flex py-2 pl-6 pr-2 justify-between items-center">
             <Link href={"/"}>
               <p className="large">Budgetlytics</p>

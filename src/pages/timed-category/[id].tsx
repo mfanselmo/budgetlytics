@@ -72,7 +72,7 @@ const TimedCategory: NextPage = () => {
       {!isLoading && !timedCategory && <NotFoundPage />}
       {timedCategory && !isLoading && (
         <div className="mt-4">
-          <div className="flex justify-between mb-4 dark:bg-slate-700 bg-slate-200 p-4 rounded">
+          <div className="flex justify-between mb-4 dark:bg-neutral-800 bg-neutral-200 p-4 rounded">
             <span className="flex">
               <p className="mr-2">Budget</p>
               <p>

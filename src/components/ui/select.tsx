@@ -51,15 +51,15 @@ export default function CustomSelect({
             }
             classNames={{
               container: (props) =>
-                `flex h-10 w-full items-center justify-between rounded-md border  bg-transparent  text-sm  focus:outline-none cursor-pointer focus:ring-2 focus:ring-slate-400 focus:ring-offset-2  dark:text-slate-50 dark:focus:ring-slate-400 dark:focus:ring-offset-slate-900 ${error ? "border-rose-500" : "border-slate-300 dark:border-slate-700"} ${props.isDisabled ? "cursor-not-allowed opacity-50" : ""}`,
+                `flex h-10 w-full items-center justify-between rounded-md border  bg-transparent  text-sm  focus:outline-none cursor-pointer focus:ring-2 focus:ring-neutral-400 focus:ring-offset-2  dark:text-neutral-50 dark:focus:ring-neutral-400 dark:focus:ring-offset-neutral-900 ${error ? "border-rose-500" : "border-neutral-300 dark:border-neutral-700"} ${props.isDisabled ? "cursor-not-allowed opacity-50" : ""}`,
               control: () => "w-full py-2 px-2",
-              placeholder: () => "text-slate-400",
+              placeholder: () => "text-neutral-400",
               menuList: () =>
-                "mt-2 animate-in fade-in-80 relative z-50 min-w-[8rem] overflow-hidden rounded-md border border-slate-100 bg-white text-slate-700 shadow-md dark:border-slate-800 dark:bg-slate-800 dark:text-slate-400",
+                "mt-2 animate-in fade-in-80 relative z-50 min-w-[8rem] overflow-hidden rounded-md border border-neutral-100 bg-white text-neutral-700 shadow-md dark:border-neutral-800 dark:bg-neutral-800 dark:text-neutral-400",
               option: () =>
-                "py-1.5 pr-2 pl-8 text-sm font-semibold text-slate-900 dark:text-slate-300 dark:hover:bg-slate-700 hover:bg-slate-100",
+                "py-1.5 pr-2 pl-8 text-sm font-semibold text-neutral-900 dark:text-neutral-300 dark:hover:bg-neutral-700 hover:bg-neutral-100",
               noOptionsMessage: () =>
-                "py-1.5 pr-2 pl-8 text-sm font-semibold text-slate-900 dark:text-slate-300",
+                "py-1.5 pr-2 pl-8 text-sm font-semibold text-neutral-900 dark:text-neutral-300",
             }}
           />
         )}

@@ -30,7 +30,7 @@ export const CategoryCard = ({ category }: { category: Category }) => {
     });
 
   return (
-    <div className="py-3 first:pt-0 flex flex-col border-b border-b-slate-200 dark:border-b-slate-700 last:mb-8  last:border-0">
+    <div className="py-3 first:pt-0 flex flex-col border-b border-b-neutral-200 dark:border-b-neutral-700 last:mb-8  last:border-0">
       <div className="flex items-center">
         <div className="grid grid-cols-4 flex-grow">
           <span className="col-span-2 text-sm font-bold">{category.name}</span>
