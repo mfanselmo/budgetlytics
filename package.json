@@ -1,6 +1,6 @@
 {
-  "name": "budgetlytics",
-  "version": "0.1.0",
+  "name": "budgety",
+  "version": "1.0.0",
   "private": true,
   "scripts": {
     "build": "next build",

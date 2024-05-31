@@ -1,6 +1,6 @@
-# Budgetlytics
+# Budgety
 
-https://budgetlytics.vercel.app/
+https://budgety.vercel.app/
 
 > Name is WIP
 

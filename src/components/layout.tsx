@@ -28,15 +28,15 @@ export default function Layout({ children }: React.PropsWithChildren) {
   return (
     <>
       <Head>
-        <title>Budgetlytics</title>
-        <meta name="description" content="Budgetlytics web app" />
+        <title>Budgety</title>
+        <meta name="description" content="Budgety web app" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <main className="flex min-h-screen flex-col">
         <header className="sticky top-0 z-40 w-full border-b border-b-neutral-200 bg-white dark:border-b-neutral-500 dark:bg-neutral-950">
           <div className="mx-auto container flex py-2 pl-6 pr-2 justify-between items-center">
             <Link href={"/"}>
-              <p className="large">Budgetlytics</p>
+              <p className="large">Budgety</p>
             </Link>
             <div className="flex space-x-2">
               {user && <UserButton userProfileMode={"modal"} />}
