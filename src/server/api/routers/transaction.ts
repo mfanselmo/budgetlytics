@@ -5,6 +5,15 @@ import { CURRENCIES } from "~/helpers/currency";
 
 export const transactionRouter = createTRPCRouter({
   create: privateProcedure
+    .meta({
+      openapi: {
+        method: "POST",
+        path: "/transaction/create",
+        summary: "Create a new transaction",
+        description: "Create a new transaction",
+        tags: ["transaction"],
+      },
+    })
     .input(
       z.object({
         name: z.string().min(1).max(280),
@@ -14,27 +23,18 @@ export const transactionRouter = createTRPCRouter({
         currency: z.enum(CURRENCIES),
       }),
     )
+    .output(
+      z.object({
+        id: z.string().cuid(),
+        createdAt: z.date(),
+        name: z.string(),
+        amount: z.number(),
+        currency: z.enum(CURRENCIES),
+        timedCategoryId: z.string().cuid(),
+      }),
+    )
     .mutation(async ({ ctx, input }) => {
       const userId = ctx.userId;
-
-      // const timedCategory = await ctx.prisma.timedCategory.findFirst({
-      //   where: {
-      //     categoryId: {
-      //       equals: input.categoryId
-      //     },
-      //     startDate: {
-      //       lte: input.date.toDate()
-      //     },
-      //     endDate: {
-      //       gte: input.date.toDate()
-      //     }
-      //   }
-      // })
-
-      // if (!timedCategory) throw new TRPCError({
-      //   "code": "NOT_FOUND",
-      //   message: "No timed category for the selected month"
-      // })
 
       const transaction = await ctx.prisma.transaction.create({
         data: {

@@ -1,4 +1,4 @@
-import { ClerkProvider } from "@clerk/nextjs";
+import { ClerkProvider, useUser } from "@clerk/nextjs";
 import { type AppType } from "next/app";
 import { ThemeProvider } from "next-themes";
 
@@ -11,9 +11,14 @@ import { PeriodContext } from "~/context/period";
 import dayjs from "dayjs";
 import { useState, useEffect, useCallback } from "react";
 
-const MyApp: AppType = ({ Component, pageProps }) => {
-  // const [queryDate, setQueryDate] = useState(dayjs().set("date", 23));
-  const { data } = api.settings.getPeriodStartDay.useQuery();
+const WithClerk = ({ children }: React.PropsWithChildren<{}>) => {
+  const { user } = useUser();
+  const { data } = api.settings.getPeriodStartDay.useQuery(
+    {},
+    {
+      enabled: !!user,
+    },
+  );
   const userStartDay = data ?? 1;
 
   const [periodStart, setPeriodStart] = useState(dayjs());
@@ -43,32 +48,39 @@ const MyApp: AppType = ({ Component, pageProps }) => {
   useEffect(() => {
     setPeriod(dayjs());
   }, [setPeriod, userStartDay]);
+  return (
+    <ThemeProvider attribute="class">
+      <PeriodContext.Provider
+        value={{
+          userStartDay: userStartDay,
+          nextPeriod: () => {
+            setPeriodStart((o) => o.add(1, "month"));
+            setPeriodEnd((o) => o.add(1, "month"));
+          },
+          previousPeriod: () => {
+            setPeriodStart((o) => o.subtract(1, "month"));
+            setPeriodEnd((o) => o.subtract(1, "month"));
+          },
+          setPeriod,
+          periodStart,
+          periodEnd,
+        }}
+      >
+        <Toaster />
+        <Layout>{children}</Layout>
+      </PeriodContext.Provider>
+    </ThemeProvider>
+  );
+};
+
+const MyApp: AppType = ({ Component, pageProps }) => {
+  // const [queryDate, setQueryDate] = useState(dayjs().set("date", 23));
 
   return (
     <ClerkProvider {...pageProps}>
-      <ThemeProvider attribute="class">
-        <PeriodContext.Provider
-          value={{
-            userStartDay: userStartDay,
-            nextPeriod: () => {
-              setPeriodStart((o) => o.add(1, "month"));
-              setPeriodEnd((o) => o.add(1, "month"));
-            },
-            previousPeriod: () => {
-              setPeriodStart((o) => o.subtract(1, "month"));
-              setPeriodEnd((o) => o.subtract(1, "month"));
-            },
-            setPeriod,
-            periodStart,
-            periodEnd,
-          }}
-        >
-          <Toaster />
-          <Layout>
-            <Component {...pageProps} />
-          </Layout>
-        </PeriodContext.Provider>
-      </ThemeProvider>
+      <WithClerk>
+        <Component {...pageProps} />
+      </WithClerk>
     </ClerkProvider>
   );
 };

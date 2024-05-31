@@ -1,4 +1,5 @@
 import { createTRPCRouter, privateProcedure } from "~/server/api/trpc";
+import { z } from "zod";
 
 export const settingsRouter = createTRPCRouter({
   // setPeriodStartDay: privateProcedure
@@ -18,23 +19,33 @@ export const settingsRouter = createTRPCRouter({
   //       },
   //     });
   //   }),
-  getPeriodStartDay: privateProcedure.query(async ({ ctx }) => {
-    let userSettings = await ctx.prisma.settings.findFirst({
-      where: {
-        userId: ctx.userId,
+  getPeriodStartDay: privateProcedure
+    .meta({
+      openapi: {
+        summary: "Get period start day",
+        tags: ["settings"],
+        method: "GET",
+        path: "/settings/getPeriodStartDay",
       },
-    });
-
-
-    if (!userSettings) {
-      userSettings = await ctx.prisma.settings.create({
-        data: {
+    })
+    .input(z.object({}))
+    .output(z.number())
+    .query(async ({ ctx }) => {
+      let userSettings = await ctx.prisma.settings.findFirst({
+        where: {
           userId: ctx.userId,
-          periodStartDay: 1,
         },
       });
-    }
 
-    return userSettings.periodStartDay
-  }),
+      if (!userSettings) {
+        userSettings = await ctx.prisma.settings.create({
+          data: {
+            userId: ctx.userId,
+            periodStartDay: 1,
+          },
+        });
+      }
+
+      return userSettings.periodStartDay;
+    }),
 });

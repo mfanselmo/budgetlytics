@@ -5,7 +5,7 @@ import NotFoundPage from "../404";
 import { CategoryCard } from "~/components/category-card";
 
 const AllCategories: NextPage = () => {
-  const { data, isLoading } = api.category.getAll.useQuery();
+  const { data, isLoading } = api.category.getAll.useQuery({});
 
   return (
     <>

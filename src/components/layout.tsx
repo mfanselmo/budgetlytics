@@ -66,6 +66,18 @@ export default function Layout({ children }: React.PropsWithChildren) {
                   <DropdownMenuItem asChild>
                     <Link href="/transaction/new">New transaction</Link>
                   </DropdownMenuItem>
+                  <DropdownMenuItem asChild>
+                    <Link href="/settings">Settings</Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem asChild>
+                    <Link
+                      href="/api-docs"
+                      rel="noopener noreferrer"
+                      target="_blank"
+                    >
+                      API docs
+                    </Link>
+                  </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
 

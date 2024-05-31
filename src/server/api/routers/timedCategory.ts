@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { CURRENCIES } from "~/helpers/currency";
 import { createTRPCRouter, privateProcedure } from "~/server/api/trpc";
 
 export const timedCategoryRouter = createTRPCRouter({
@@ -76,11 +77,35 @@ export const timedCategoryRouter = createTRPCRouter({
       });
     }),
   getAllInPeriod: privateProcedure
+    .meta({
+      openapi: {
+        summary: "Get all timed categories in a period",
+        tags: ["category"],
+        method: "GET",
+        path: "/category/getAllInPeriod",
+      },
+    })
     .input(
       z.object({
         startDate: z.date(),
         endDate: z.date(),
       }),
+    )
+    .output(
+      z.array(
+        z.object({
+          id: z.string().cuid(),
+          createdAt: z.date(),
+          updatedAt: z.date(),
+          startDate: z.date(),
+          endDate: z.date(),
+          budget: z.number(),
+          name: z.string(),
+          currentAmount: z.number(),
+          currency: z.enum(CURRENCIES),
+          categoryId: z.string().nullable(),
+        }),
+      ),
     )
     .query(({ ctx, input }) => {
       return ctx.prisma.timedCategory.findMany({

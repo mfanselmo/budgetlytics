@@ -1,32 +1,27 @@
 import { type NextPage } from "next";
-import { api } from "~/utils/api";
 import { Button } from "~/components/ui/button";
-import { LoadingPage } from "~/components/loading";
-import { useContext } from "react";
-import { PeriodContext } from "~/context/period";
-import { TimedCategoryCard } from "~/components/timed-category-card";
-import NotFoundPage from "../404";
-import { CategoryCard } from "~/components/category-card";
-import PeriodChange from "~/components/period-change";
 
-const AllCategories: NextPage = () => {
-  const { data, isLoading } = api.category.getAll.useQuery();
-  const period = useContext(PeriodContext);
+import { useAuth } from "@clerk/nextjs";
+import { useState } from "react";
+
+const Settings: NextPage = () => {
+  const { getToken } = useAuth();
+
+  const [token, setToken] = useState<string | null>(null);
+
+  const createToken = async () => {
+    const token = await getToken({ template: "Budgety" });
+    setToken(token);
+  };
 
   return (
     <>
       <h2>Settings</h2>
-      {isLoading && <LoadingPage />}
-      {!isLoading && !data && <NotFoundPage />}
-      {data && !isLoading && (
-        <div className="mt-4">
-          {data.map((category) => (
-            <CategoryCard category={category} key={category.id} />
-          ))}
-        </div>
-      )}
+      <Button onClick={createToken}>Create token</Button>
+
+      {token && <span className="text-wrap	">{token}</span>}
     </>
   );
 };
 
-export default AllCategories;
+export default Settings;

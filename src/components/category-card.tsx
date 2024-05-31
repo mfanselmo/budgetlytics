@@ -12,7 +12,7 @@ type RouterOutput = inferRouterOutputs<AppRouter>;
 type Category = RouterOutput["category"]["getAll"][number];
 
 export const CategoryCard = ({ category }: { category: Category }) => {
-  const ctx = api.useContext();
+  const ctx = api.useUtils();
   const { toast } = useToast();
 
   const { mutate: deleteCategory, isLoading: isDeleting } =

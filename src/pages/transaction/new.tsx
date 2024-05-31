@@ -21,9 +21,6 @@ const NewTransaction: NextPage = () => {
   const { toast } = useToast();
   const router = useRouter();
 
-  console.log(period.periodStart.toDate());
-  console.log(period.periodEnd.toDate());
-
   const formSchema = z.object({
     name: z.string().min(1, "Name is required").max(280),
     date: z
@@ -109,7 +106,6 @@ const NewTransaction: NextPage = () => {
   const onSubmit: SubmitHandler<FormSchemaType> = (data) => {
     // take from the form date only the date, month and year. Apply the current time to that date
     const dateInformation = dayjs(data.date);
-    console.log(dateInformation.get("date"));
     void mutate({
       ...data,
       date: dayjs()

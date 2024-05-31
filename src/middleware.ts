@@ -1,31 +1,14 @@
-import { withClerkMiddleware, getAuth } from "@clerk/nextjs/server";
-import { NextResponse } from "next/server";
-import type { NextRequest } from "next/server";
+import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
 
-const publicPaths = ["/"];
+const isPublicRoute = createRouteMatcher(["/", "/api-docs"]);
 
-const isPublic = (path: string) => {
-  return publicPaths.find((x) =>
-    path.match(new RegExp(`^${x}$`.replace("*$", "($|/)"))),
-  );
-};
-
-export default withClerkMiddleware((request: NextRequest) => {
-  if (isPublic(request.nextUrl.pathname)) {
-    return NextResponse.next();
+export default clerkMiddleware((auth, request) => {
+  if (!isPublicRoute(request)) {
+    auth().protect();
   }
-  // if the user is not signed in redirect them to the sign in page.
-  const { userId } = getAuth(request);
-
-  if (!userId) {
-    // redirect the users to /pages/sign-in/[[...index]].ts
-
-    const signInUrl = new URL("/", request.url);
-    return NextResponse.redirect(signInUrl);
-  }
-  return NextResponse.next();
 });
 
 export const config = {
-  matcher: "/((?!_next/image|_next/static|favicon.ico).*)",
+  matcher: ["/((?!.+\\.[\\w]+$|_next).*)", "/", "/(api|trpc)(.*)"],
+  //   matcher: "/((?!_next/image|_next/static|favicon.ico).*)", old config, keep for a bit
 };

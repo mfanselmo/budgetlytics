@@ -15,6 +15,7 @@
  * These allow you to access things when processing a request, like the database, the session, etc.
  */
 import { type CreateNextContextOptions } from "@trpc/server/adapters/next";
+import { OpenApiMeta } from "trpc-openapi";
 
 import { prisma } from "~/server/db";
 
@@ -47,35 +48,38 @@ import { getAuth } from "@clerk/nextjs/server";
 import { ZodError } from "zod";
 import { Prisma } from "@prisma/client";
 
-const t = initTRPC.context<typeof createTRPCContext>().create({
-  transformer: superjson,
-  errorFormatter({ shape, error }) {
-    let message;
-    if (error.cause instanceof ZodError) {
-      message = Object.entries(error.cause.flatten().fieldErrors).reduce(
-        (acc, cause) => {
-          const field = cause[0];
-          const mes = (cause[1] || [""]).join("");
+const t = initTRPC
+  .meta<OpenApiMeta>()
+  .context<typeof createTRPCContext>()
+  .create({
+    transformer: superjson,
+    errorFormatter({ shape, error }) {
+      let message;
+      if (error.cause instanceof ZodError) {
+        message = Object.entries(error.cause.flatten().fieldErrors).reduce(
+          (acc, cause) => {
+            const field = cause[0];
+            const mes = (cause[1] || [""]).join("");
 
-          return `${acc}\n${field} - ${mes}`.trimStart();
+            return `${acc}\n${field} - ${mes}`.trimStart();
+          },
+          "",
+        );
+      } else if (error.cause instanceof Prisma.PrismaClientKnownRequestError) {
+        message = error.cause.message;
+      } else if (error instanceof TRPCError) {
+        message = error.message;
+      }
+
+      return {
+        ...shape,
+        data: {
+          code: shape.data.code,
+          message,
         },
-        "",
-      );
-    } else if (error.cause instanceof Prisma.PrismaClientKnownRequestError) {
-      message = error.cause.message;
-    } else if (error instanceof TRPCError) {
-      message = error.message;
-    }
-
-    return {
-      ...shape,
-      data: {
-        code: shape.data.code,
-        message,
-      },
-    };
-  },
-});
+      };
+    },
+  });
 
 /**
  * 3. ROUTER & PROCEDURE (THE IMPORTANT BIT)

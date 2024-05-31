@@ -80,11 +80,31 @@ export const categoryRouter = createTRPCRouter({
         },
       });
     }),
-  getAll: privateProcedure.query(({ ctx }) => {
-    return ctx.prisma.category.findMany({
-      where: {
-        userId: ctx.userId,
+  getAll: privateProcedure
+    .meta({
+      openapi: {
+        method: "GET",
+        path: "/category",
+        summary: "Get all categories",
+        tags: ["category"],
       },
-    });
-  }),
+    })
+    .input(z.object({}))
+    .output(
+      z.array(
+        z.object({
+          id: z.string().cuid(),
+          name: z.string(),
+          budget: z.number(),
+          currency: z.enum(CURRENCIES),
+        }),
+      ),
+    )
+    .query(({ ctx }) => {
+      return ctx.prisma.category.findMany({
+        where: {
+          userId: ctx.userId,
+        },
+      });
+    }),
 });
