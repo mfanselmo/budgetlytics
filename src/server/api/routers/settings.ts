@@ -29,7 +29,7 @@ export const settingsRouter = createTRPCRouter({
       },
     })
     .input(z.object({}))
-    .output(z.number())
+    .output(z.object({ day: z.number() }))
     .query(async ({ ctx }) => {
       let userSettings = await ctx.prisma.settings.findFirst({
         where: {
@@ -46,6 +46,6 @@ export const settingsRouter = createTRPCRouter({
         });
       }
 
-      return userSettings.periodStartDay;
+      return { day: userSettings.periodStartDay };
     }),
 });

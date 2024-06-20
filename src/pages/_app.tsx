@@ -19,7 +19,7 @@ const WithClerk = ({ children }: React.PropsWithChildren<{}>) => {
       enabled: !!user,
     },
   );
-  const userStartDay = data ?? 1;
+  const userStartDay = data?.day ?? 1;
 
   const [periodStart, setPeriodStart] = useState(dayjs());
   const [periodEnd, setPeriodEnd] = useState(dayjs().add(1, "month"));
