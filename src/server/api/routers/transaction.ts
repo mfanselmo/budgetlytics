@@ -49,17 +49,56 @@ export const transactionRouter = createTRPCRouter({
 
       return transaction;
     }),
-  getAll: privateProcedure.query(({ ctx }) => {
-    return ctx.prisma.transaction.findMany({
-      where: {
-        userId: ctx.userId,
+  get: privateProcedure
+    .meta({
+      openapi: {
+        method: "GET",
+        path: "/transaction",
+        summary: "GET all transactions",
+        description: "Get all transactions paginated",
+        tags: ["transaction"],
       },
-      take: 100,
-      orderBy: {
-        createdAt: "asc",
-      },
-    });
-  }),
+    })
+    .input(z.object({}))
+    .output(
+      z.array(
+        z.object({
+          id: z.string().cuid(),
+          createdAt: z.date(),
+          name: z.string(),
+          amount: z.number(),
+          currency: z.enum(CURRENCIES),
+          timedCategory: z.object({
+            id: z.string().cuid(),
+            name: z.string(),
+          }),
+        }),
+      ),
+    )
+    .query(({ ctx }) => {
+      return ctx.prisma.transaction.findMany({
+        where: {
+          userId: ctx.userId,
+        },
+        select: {
+          id: true,
+          createdAt: true,
+          name: true,
+          amount: true,
+          currency: true,
+          timedCategory: {
+            select: {
+              id: true,
+              name: true,
+            },
+          },
+        },
+        take: 20,
+        orderBy: {
+          createdAt: "desc",
+        },
+      });
+    }),
   getById: privateProcedure
     .input(
       z.object({

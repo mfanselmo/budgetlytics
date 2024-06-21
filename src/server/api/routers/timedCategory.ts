@@ -83,6 +83,12 @@ export const timedCategoryRouter = createTRPCRouter({
         tags: ["category"],
         method: "GET",
         path: "/category/getAllInPeriod",
+        example: {
+          request: {
+            startDate: "2024-06-19T04:00:00.000Z",
+            endDate: "2024-07-18T04:00:00.000Z",
+          },
+        },
       },
     })
     .input(
