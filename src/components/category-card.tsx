@@ -7,6 +7,7 @@ import { Button } from "./ui/button";
 import { api } from "~/utils/api";
 import { useToast } from "~/hooks/use-toast";
 import formatCurrency from "~/helpers/currency";
+import { DangerDialog } from "./ui/alert-dialog";
 
 type RouterOutput = inferRouterOutputs<AppRouter>;
 type Category = RouterOutput["category"]["getAll"][number];
@@ -52,14 +53,13 @@ export const CategoryCard = ({ category }: { category: Category }) => {
           </Button>
         </Link>
         {process.env.NODE_ENV === "development" && (
-          <Button
-            onClick={() => deleteCategory({ id: category.id })}
+          <DangerDialog
             loading={isDeleting}
-            size={"square-sm"}
-            variant={"destructive"}
+            onClick={() => deleteCategory({ id: category.id })}
+            buttonProps={{ size: "square-sm" }}
           >
             <Trash />
-          </Button>
+          </DangerDialog>
         )}
       </div>
     </div>

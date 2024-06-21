@@ -4,7 +4,7 @@ import * as React from "react";
 import * as AlertDialogPrimitive from "@radix-ui/react-alert-dialog";
 
 import { cn } from "~/lib/utils";
-import { Button, buttonVariants } from "~/components/ui/button";
+import { Button, ButtonProps, buttonVariants } from "~/components/ui/button";
 
 const AlertDialog = AlertDialogPrimitive.Root;
 
@@ -130,11 +130,16 @@ function DangerDialog({
   children,
   onClick,
   loading,
-}: React.PropsWithChildren<{ onClick: () => void; loading: boolean }>) {
+  buttonProps = {},
+}: React.PropsWithChildren<{
+  onClick: () => void;
+  loading: boolean;
+  buttonProps?: ButtonProps;
+}>) {
   return (
     <AlertDialog>
       <AlertDialogTrigger asChild>
-        <Button variant="destructive" loading={loading}>
+        <Button {...buttonProps} variant="destructive" loading={loading}>
           {children}
         </Button>
       </AlertDialogTrigger>

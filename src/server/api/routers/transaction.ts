@@ -93,7 +93,7 @@ export const transactionRouter = createTRPCRouter({
             },
           },
         },
-        take: 20,
+        take: 8, // All that fit in the widget
         orderBy: {
           createdAt: "desc",
         },
