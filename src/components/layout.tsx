@@ -22,7 +22,6 @@ import { useTheme } from "next-themes";
 import { SunMoon } from "lucide-react";
 
 export default function Layout({ children }: React.PropsWithChildren) {
-  const { user } = useUser();
   const { theme, setTheme } = useTheme();
 
   return (
@@ -38,61 +37,60 @@ export default function Layout({ children }: React.PropsWithChildren) {
             <Link href={"/"}>
               <p className="large">Budgety</p>
             </Link>
-            <div className="flex space-x-2">
-              {user && <UserButton userProfileMode={"modal"} />}
+            <div className="flex space-x-2 items-center">
+              <SunMoon
+                role="button"
+                onClick={() =>
+                  theme === "dark" ? setTheme("light") : setTheme("dark")
+                }
+              />
+              <SignedIn>
+                <UserButton userProfileMode={"modal"} />
 
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button variant="outline" size={"sm"}>
-                    Menu
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent className={"mr-2"}>
-                  <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem
-                    onClick={() =>
-                      theme === "dark" ? setTheme("light") : setTheme("dark")
-                    }
-                  >
-                    <span className="pr-2">Change theme</span> <SunMoon />
-                  </DropdownMenuItem>
-                  <DropdownMenuItem>
-                    <Link href="/category">All categories</Link>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem>
-                    <Link href="/category/new">New category</Link>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem asChild>
-                    <Link href="/transaction/new">New transaction</Link>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem asChild>
-                    <Link href="/settings">Settings</Link>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem asChild>
-                    <Link
-                      href="/api-docs"
-                      rel="noopener noreferrer"
-                      target="_blank"
-                    >
-                      API docs
-                    </Link>
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="outline" size={"sm"}>
+                      Menu
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent className={"mr-2"}>
+                    <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem>
+                      <Link href="/category">All categories</Link>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem>
+                      <Link href="/category/new">New category</Link>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem asChild>
+                      <Link href="/transaction/new">New transaction</Link>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem asChild>
+                      <Link href="/settings">Settings</Link>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem asChild>
+                      <Link
+                        href="/api-docs"
+                        rel="noopener noreferrer"
+                        target="_blank"
+                      >
+                        API docs
+                      </Link>
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              </SignedIn>
+              <SignedOut>
+                <SignInButton mode="modal">
+                  <Button className="my-auto">Sign in</Button>
+                </SignInButton>
+              </SignedOut>
 
-              {/* <ThemeButton />  */}
+              {/* <ThemeButton /> */}
             </div>
           </div>
         </header>
-        <div className="h-full mx-auto container px-6 py-6">
-          <SignedIn>{children}</SignedIn>
-          <SignedOut>
-            <SignInButton mode="modal">
-              <Button className="my-auto">Sign in</Button>
-            </SignInButton>
-          </SignedOut>
-        </div>
+        <div className="h-full mx-auto container px-6 py-6">{children}</div>
       </main>
     </>
   );
