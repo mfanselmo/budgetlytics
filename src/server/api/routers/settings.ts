@@ -2,23 +2,22 @@ import { createTRPCRouter, privateProcedure } from "~/server/api/trpc";
 import { z } from "zod";
 
 export const settingsRouter = createTRPCRouter({
-  // setPeriodStartDay: privateProcedure
-  //   .input(
-  //     z.object({
-  //       periodStartDay: z.number(),
-  //     }),
-  //   )
-  //   .query(({ ctx, input }) => {
-  //     return ctx.prisma.category.findFirstOrThrow({
-  //       where: {
-  //         userId: ctx.userId,
-  //         id: input.id,
-  //       },
-  //       include: {
-  //         timedCategories: true,
-  //       },
-  //     });
-  //   }),
+  setPeriodStartDay: privateProcedure
+    .input(
+      z.object({
+        periodStartDay: z.number(),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      await ctx.prisma.settings.updateMany({
+        where: {
+          userId: ctx.userId,
+        },
+        data: {
+          periodStartDay: input.periodStartDay,
+        },
+      });
+    }),
   getPeriodStartDay: privateProcedure
     .meta({
       openapi: {

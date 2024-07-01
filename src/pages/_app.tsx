@@ -1,4 +1,4 @@
-import { ClerkProvider, useUser } from "@clerk/nextjs";
+import { ClerkProvider, SignedIn, SignedOut, useUser } from "@clerk/nextjs";
 import { type AppType } from "next/app";
 import { ThemeProvider } from "next-themes";
 
@@ -10,8 +10,9 @@ import { Toaster } from "~/components/ui/toaster";
 import { PeriodContext } from "~/context/period";
 import dayjs from "dayjs";
 import { useState, useEffect, useCallback } from "react";
+import Landing from "~/components/landing";
 
-const WithClerk = ({ children }: React.PropsWithChildren<{}>) => {
+const SignedInApp = ({ children }: React.PropsWithChildren<{}>) => {
   const { user } = useUser();
   const { data } = api.settings.getPeriodStartDay.useQuery(
     {},
@@ -49,38 +50,43 @@ const WithClerk = ({ children }: React.PropsWithChildren<{}>) => {
     setPeriod(dayjs());
   }, [setPeriod, userStartDay]);
   return (
-    <ThemeProvider attribute="class">
-      <PeriodContext.Provider
-        value={{
-          userStartDay: userStartDay,
-          nextPeriod: () => {
-            setPeriodStart((o) => o.add(1, "month"));
-            setPeriodEnd((o) => o.add(1, "month"));
-          },
-          previousPeriod: () => {
-            setPeriodStart((o) => o.subtract(1, "month"));
-            setPeriodEnd((o) => o.subtract(1, "month"));
-          },
-          setPeriod,
-          periodStart,
-          periodEnd,
-        }}
-      >
-        <Toaster />
-        <Layout>{children}</Layout>
-      </PeriodContext.Provider>
-    </ThemeProvider>
+    <PeriodContext.Provider
+      value={{
+        userStartDay: userStartDay,
+        nextPeriod: () => {
+          setPeriodStart((o) => o.add(1, "month"));
+          setPeriodEnd((o) => o.add(1, "month"));
+        },
+        previousPeriod: () => {
+          setPeriodStart((o) => o.subtract(1, "month"));
+          setPeriodEnd((o) => o.subtract(1, "month"));
+        },
+        setPeriod,
+        periodStart,
+        periodEnd,
+      }}
+    >
+      <Toaster />
+      <Layout>{children}</Layout>
+    </PeriodContext.Provider>
   );
 };
 
 const MyApp: AppType = ({ Component, pageProps }) => {
-  // const [queryDate, setQueryDate] = useState(dayjs().set("date", 23));
-
   return (
     <ClerkProvider {...pageProps}>
-      <WithClerk>
-        <Component {...pageProps} />
-      </WithClerk>
+      <ThemeProvider attribute="class">
+        <SignedIn>
+          <SignedInApp>
+            <Component {...pageProps} />
+          </SignedInApp>
+        </SignedIn>
+        <SignedOut>
+          <Layout>
+            <Landing />
+          </Layout>
+        </SignedOut>
+      </ThemeProvider>
     </ClerkProvider>
   );
 };
